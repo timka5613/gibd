@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему - ГИБДД ОРЛС</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-200 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <div class="text-center mb-6">
+            <div class="flex items-center justify-center mb-4">
+                <i class="fas fa-car-side text-4xl text-blue-800"></i>
+                <h1 class="text-3xl font-bold text-gray-800 ml-3">ГУ ГИБДД</h1>
+            </div>
+            <p class="text-gray-600">Личный кабинет</p>
+        </div>
+        
+        <div id="loginForm">
+            <div class="mb-4">
+                <label for="username" class="block text-gray-700 text-sm font-medium mb-2">Логин</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i class="fas fa-user text-gray-400"></i>
+                    </span>
+                    <input type="text" id="username" name="username" class="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Введите логин" required>
+                </div>
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block text-gray-700 text-sm font-medium mb-2">Пароль</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i class="fas fa-lock text-gray-400"></i>
+                    </span>
+                    <input type="password" id="password" name="password" class="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Введите пароль" required>
+                </div>
+            </div>
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <input type="checkbox" id="rememberMe" name="rememberMe" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                    <label for="rememberMe" class="ml-2 block text-sm text-gray-900">Запомнить меня</label>
+                </div>
+                <a href="#" class="text-sm text-blue-600 hover:text-blue-500">Забыли пароль?</a>
+            </div>
+            <div>
+                <button type="button" onclick="login()" class="w-full bg-blue-700 text-white py-2 px-4 rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Войти
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
+
+            // Ваша "база данных"
+            const fakeDatabase = {
+                users: [
+                    { id: 1, nickname: 'Timofey_Tenkov', role: 'Зам Начальника ОРЛС', auth_code: 'timka5613', special_code: 'special1', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 2, nickname: 'Aleksey_Gromovets', role: 'Начальник ОРЛС', auth_code: 'GROMOVETS11', special_code: 'special2', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 3, nickname: 'Nikita_Samoletov', role: 'ГУ ГИБДД', auth_code: 'gygibddred11', special_code: 'special3', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 4, nickname: 'Vasiliy_Kanow', role: 'ГУ ГИБДД', auth_code: 'gygibddred11', special_code: 'special4', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 5, nickname: 'Ilya_Bortnikov', role: 'ГУ ГИБДД', auth_code: 'gygibddred11', special_code: 'special5', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 6, nickname: 'Artemiy_Frolov', role: 'ГУ ГИБДД', auth_code: 'gygibddred11', special_code: 'special6', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 7, nickname: 'Connor_Brenner', role: 'Стажер ОРЛС', auth_code: 'BCHS1YU', special_code: 'special7', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 8, nickname: 'Vladimir_Zhirinovski', role: 'Стажер ОРЛС', auth_code: 'YO166QZ', special_code: 'special8', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 9, nickname: 'Maksim_Levutskiy', role: 'Стажер ОРЛС', auth_code: 'TK98LST', special_code: 'special9', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 10, nickname: 'Vyacheslav_Bortnikov', role: 'Стажер ОРЛС', auth_code: 'AUNX5X', special_code: 'special10', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 11, nickname: 'Tyler_Sawyer', role: 'Стажер ОРЛС', auth_code: 'TTNAXFQ', special_code: 'special11', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 12, nickname: 'Barbaro_Stone', role: 'Стажер ОРЛС', auth_code: 'RXC24GA', special_code: 'special12', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 13, nickname: 'Alexander_Gyrski', role: 'Стажер ОРЛС', auth_code: 'BCKD2JD', special_code: 'special13', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 14, nickname: 'Semen_Diachenco', role: 'Стажер ОРЛС', auth_code: 'SDF2NFF', special_code: 'special14', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 15, nickname: 'Alexei_Primes', role: 'Стажер ОРЛС', auth_code: 'SBNCJ13', special_code: 'special15', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 16, nickname: 'Oleg_Tarat', role: 'Инструктор ОРЛС', auth_code: 'HSDXNAA', special_code: 'special16', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 17, nickname: 'Dima_Bardin', role: 'Инструктор ОРЛС', auth_code: 'AGSHM1S', special_code: 'special17', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 18, nickname: 'Igor_Sotkov', role: 'Старший Инструктор ОРЛС', auth_code: 'DEIP11C', special_code: 'special18', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' },
+                    { id: 19, nickname: 'Artem_Trocki', role: 'Зам Начальника ОРЛС', auth_code: 'SAJBDSD', special_code: 'special19', completed_certifications: 0, assignedTests: [], last_active: '2025-09-08T10:00:00Z' }
+                ]
+            };
+
+            const user = fakeDatabase.users.find(u => u.nickname === usernameInput && u.auth_code === passwordInput);
+
+            if (user) {
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                window.location.href = 'panel.html';
+            } else {
+                alert('Неверный логин или пароль');
+            }
+        }
+    </script>
+</body>
+</html>
