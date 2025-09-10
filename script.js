@@ -339,7 +339,7 @@ function loadAccounts() {
         tr.innerHTML = `
             <td class="py-2 px-4 border-b">${account.id}</td>
             <td class="py-2 px-4 border-b">${account.nickname}</td>
-            <td class="py-2 px-4 border-b">${account.role}</td>
+            <td class="py-2 px-4 border-b"><img src="${getRoleImage(account.role)}" alt="${account.role}" class="rank-image"></td>
             <td class="py-2 px-4 border-b">${new Date(account.last_active).toLocaleString()}</td>
             <td class="py-2 px-4 border-b">
                 <button onclick="openModal('editAccountModal', ${account.id})" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Редактировать</button>
@@ -620,6 +620,20 @@ function renderWeeklyActivityList(activities) {
         li.innerHTML = `<p class="text-lg font-bold">${activity.nickname}</p><p class="text-sm text-gray-600">${activityDetails} от ${new Date(activity.date).toLocaleDateString()}</p>`;
         list.appendChild(li);
     });
+}
+
+// Новая функция для получения пути к изображению погона по роли
+function getRoleImage(role) {
+    switch (role) {
+        case 'ГУ ГИБДД':
+            return 'images/gu_gibdd_rank.png';
+        case 'Начальник ОРЛС':
+            return 'images/orls_boss_rank.png';
+        case 'Сотрудник':
+            return 'images/staff_rank.png';
+        default:
+            return ''; // Возвращает пустую строку, если роль не найдена
+    }
 }
 
 // Запуск приложения
