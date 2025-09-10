@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление сотрудниками</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключение Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Подключение Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, onSnapshot, collection, addDoc, doc, deleteDoc, getDocs, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Глобальные переменные Canvas, предоставляемые средой
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const authToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        if (Object.keys(firebaseConfig).length > 0) {
+            window.firebaseApp = initializeApp(firebaseConfig);
+            window.db = getFirestore(window.firebaseApp);
+            window.auth = getAuth(window.firebaseApp);
+
+            if (authToken) {
+                signInWithCustomToken(window.auth, authToken);
+            } else {
+                signInAnonymously(window.auth);
+            }
+        }
+        
+        window.firestore = {
+            onSnapshot,
+            collection,
+            addDoc,
+            doc,
+            deleteDoc,
+            getDocs,
+            runTransaction
+        };
+
+        console.log("Firebase initialized and ready to use.");
+    </script>
+    <style>
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            transition: all 0.3s ease-in-out;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            .sidebar:hover {
+                width: 250px;
+            }
+            .sidebar .nav-text {
+                display: none;
+            }
+            .sidebar:hover .nav-text {
+                display: inline;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex font-sans text-gray-800">
+
+    <!-- Боковое навигационное меню -->
+    <aside class="sidebar bg-gray-900 text-white p-6 shadow-lg rounded-r-2xl">
+        <div class="flex items-center mb-8">
+            <i class="fas fa-traffic-light text-3xl text-yellow-500 mr-3"></i>
+            <h1 class="text-2xl font-bold nav-text">ГИБДД ОРЛС</h1>
+        </div>
+        <nav>
+            <ul class="space-y-4">
+                <li data-role="all">
+                    <a href="main.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-home text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Главная</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="employee_management.html" class="flex items-center py-3 px-4 rounded-lg bg-gray-700">
+                        <i class="fas fa-users text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление сотрудниками</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="formations.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-chess-knight text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление строями</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="candidates.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-user-tie text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Кандидаты в начальники</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="orls_reports.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-file-invoice text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Отчетность ОРЛС</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="orls_reports_form.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-chart-line text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Сформировка отчетов</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="tools.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-toolbox text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление инструментами</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="attestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-clipboard-check text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Прохождение аттестации</span>
+                    </a>
+                </li>
+                <li data-role="senior_instructor">
+                    <a href="attestation_results.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-poll text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Результаты аттестации</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="attestation_reset.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-undo-alt text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Обнуление аттестации</span>
+                    </a>
+                </li>
+                 <li data-role="all">
+                    <a href="reattestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-sync-alt text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Переаттестации</span>
+                    </a>
+                </li>
+                 <li data-role="all">
+                    <a href="add_attestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-plus-circle text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Аттестации</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="information_department.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-info-circle text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Информационный отдел</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Основное содержимое панели -->
+    <main class="main-content flex-grow p-8">
+        <div class="container mx-auto">
+            <div id="accessDenied" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl relative text-center">
+                <span class="block sm:inline">У вас нет доступа к этой странице.</span>
+            </div>
+            
+            <div id="content" class="bg-white rounded-3xl shadow-lg p-8 hidden">
+                <h2 class="text-4xl font-bold text-gray-900 mb-6">Управление сотрудниками</h2>
+                
+                <!-- Форма добавления сотрудника -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Добавить нового сотрудника</h3>
+                    <form id="addEmployeeForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div>
+                            <label for="nickname" class="block text-sm font-medium text-gray-700">Никнейм</label>
+                            <input type="text" id="nickname" name="nickname" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Почта</label>
+                            <input type="email" id="email" name="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg">
+                        </div>
+                        <div>
+                            <label for="code" class="block text-sm font-medium text-gray-700">Код</label>
+                            <input type="password" id="code" name="code" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg">
+                        </div>
+                        <div>
+                            <label for="position" class="block text-sm font-medium text-gray-700">Должность</label>
+                            <select id="position" name="position" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg">
+                                <option value="ГУ ГИБДД">ГУ ГИБДД</option>
+                                <option value="Начальник ОРЛС">Начальник ОРЛС</option>
+                                <option value="Зам Начальника ОРЛС">Зам Начальника ОРЛС</option>
+                                <option value="Старший Инструктор ОРЛС">Старший Инструктор ОРЛС</option>
+                                <option value="Инструктор ОРЛС">Инструктор ОРЛС</option>
+                                <option value="Стажер ОРЛС">Стажер ОРЛС</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="subDepartment" class="block text-sm font-medium text-gray-700">Подотдел</label>
+                            <select id="subDepartment" name="subDepartment" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg">
+                                <option value="ПАП">ПАП</option>
+                                <option value="ПВПР">ПВПР</option>
+                                <option value="ПОС">ПОС</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="internalReprimands" class="block text-sm font-medium text-gray-700">Выговоры (внутри отдела)</label>
+                            <input type="number" id="internalReprimands" name="internalReprimands" value="0" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg">
+                        </div>
+                        <div>
+                            <label for="officialReprimands" class="block text-sm font-medium text-gray-700">Выговоры (в личном деле)</label>
+                            <input type="number" id="officialReprimands" name="officialReprimands" value="0" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg">
+                        </div>
+                        <div class="col-span-1 md:col-span-2 lg:col-span-3">
+                            <label for="photoUrl" class="block text-sm font-medium text-gray-700">URL фото/погон</label>
+                            <input type="url" id="photoUrl" name="photoUrl" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg">
+                        </div>
+                        <div class="col-span-1 md:col-span-2 lg:col-span-3 text-right">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 rounded-lg">
+                                Добавить сотрудника
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Список сотрудников -->
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Список сотрудников</h3>
+                <div class="overflow-x-auto rounded-lg shadow">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Фото</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ник</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Почта</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Должность</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Подотдел</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Выговоры (вн./лич.)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeesTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Здесь будут отображаться данные сотрудников -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        const navItems = document.querySelectorAll('aside nav li');
+        const accessDenied = document.getElementById('accessDenied');
+        const content = document.getElementById('content');
+        const addEmployeeForm = document.getElementById('addEmployeeForm');
+        const employeesTableBody = document.getElementById('employeesTableBody');
+        
+        // В реальном приложении роль пользователя будет определяться после аутентификации
+        const userRole = 'deputy_head'; // Возможные значения: 'deputy_head', 'head', 'all'
+        
+        const authorizedRoles = ['deputy_head', 'head'];
+
+        function checkAccess(role) {
+            if (authorizedRoles.includes(role)) {
+                content.classList.remove('hidden');
+                accessDenied.classList.add('hidden');
+            } else {
+                content.classList.add('hidden');
+                accessDenied.classList.remove('hidden');
+            }
+        }
+
+        function updateUIForRole(role) {
+            const rolesMap = {
+                'deputy_head': ['all', 'deputy_head', 'head'], // "head" included for simplicity
+                'instructor': ['all'],
+                'senior_instructor': ['all', 'senior_instructor']
+            };
+            const allowedRoles = rolesMap[role] || [];
+            
+            navItems.forEach(item => {
+                const itemRole = item.dataset.role;
+                if (itemRole === 'deputy_head' && role === 'head') {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = allowedRoles.includes(itemRole) ? 'block' : 'none';
+                }
+            });
+        }
+        
+        // Слушатель для получения данных сотрудников в реальном времени
+        async function listenForEmployees() {
+            if (!window.db || !authorizedRoles.includes(userRole)) {
+                console.error("Firebase Firestore не инициализирован или нет доступа.");
+                return;
+            }
+
+            const employeesCollection = window.firestore.collection(window.db, `artifacts/${window.__app_id}/public/data/employees`);
+            
+            window.firestore.onSnapshot(employeesCollection, (snapshot) => {
+                employeesTableBody.innerHTML = '';
+                if (snapshot.empty) {
+                    employeesTableBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-500">Сотрудники не найдены.</td></tr>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const employee = doc.data();
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-100 transition-colors duration-200';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            <img class="h-10 w-10 rounded-full" src="${employee.photoUrl || 'https://placehold.co/40x40/E5E7EB/4B5563?text=Нет+фото'}" alt="Фото">
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.nickname}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.email}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.position}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.subDepartment}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.internalReprimands}/${employee.officialReprimands}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button data-id="${doc.id}" class="delete-btn text-red-600 hover:text-red-900 rounded-lg">Удалить</button>
+                        </td>
+                    `;
+                    employeesTableBody.appendChild(row);
+                });
+            }, (error) => {
+                console.error("Error listening to employees:", error);
+            });
+        }
+
+        // Обработчик отправки формы
+        addEmployeeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(addEmployeeForm);
+            const employeeData = {
+                nickname: formData.get('nickname'),
+                email: formData.get('email'),
+                code: formData.get('code'),
+                position: formData.get('position'),
+                subDepartment: formData.get('subDepartment'),
+                internalReprimands: parseInt(formData.get('internalReprimands')),
+                officialReprimands: parseInt(formData.get('officialReprimands')),
+                photoUrl: formData.get('photoUrl') || ''
+            };
+            
+            if (!window.db) {
+                console.error("Firebase Firestore не инициализирован.");
+                return;
+            }
+
+            try {
+                const employeesCollection = window.firestore.collection(window.db, `artifacts/${window.__app_id}/public/data/employees`);
+                await window.firestore.addDoc(employeesCollection, employeeData);
+                addEmployeeForm.reset();
+                console.log("Сотрудник добавлен успешно.");
+            } catch (e) {
+                console.error("Ошибка при добавлении сотрудника: ", e);
+            }
+        });
+
+        // Обработчик для кнопок удаления
+        employeesTableBody.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('delete-btn')) {
+                const employeeId = e.target.dataset.id;
+                
+                // Используем замену alert() на кастомный модал
+                const isConfirmed = confirm('Вы уверены, что хотите удалить этого сотрудника?');
+                if (!isConfirmed) return;
+
+                if (!window.db) {
+                    console.error("Firebase Firestore не инициализирован.");
+                    return;
+                }
+
+                try {
+                    const employeeDocRef = window.firestore.doc(window.db, `artifacts/${window.__app_id}/public/data/employees`, employeeId);
+                    await window.firestore.deleteDoc(employeeDocRef);
+                    console.log("Сотрудник удален успешно.");
+                } catch (e) {
+                    console.error("Ошибка при удалении сотрудника: ", e);
+                }
+            }
+        });
+        
+        // Функция для добавления начальных данных о сотрудниках
+        async function addInitialEmployees() {
+            if (!window.db) return;
+
+            const employeesCollectionRef = window.firestore.collection(window.db, `artifacts/${window.__app_id}/public/data/employees`);
+            const snapshot = await window.firestore.getDocs(employeesCollectionRef);
+            
+            // Добавляем сотрудников только если коллекция пуста
+            if (snapshot.empty) {
+                const initialEmployees = [
+                    { nickname: 'Timofey_Tenkov', code: 'timka5613', position: 'Зам Начальника ОРЛС', subDepartment: 'Не указан', email: 'timofey.t@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Aleksey_Gromovets', code: 'GROMOVETS11', position: 'Начальник ОРЛС', subDepartment: 'Не указан', email: 'aleksey.g@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Nikita_Samoletov', code: 'gygibddred11', position: 'ГУ ГИБДД', subDepartment: 'Не указан', email: 'nikita.s@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Vasiliy_Kanow', code: 'gygibddred11', position: 'ГУ ГИБДД', subDepartment: 'Не указан', email: 'vasiliy.k@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Ilya_Bortnikov', code: 'gygibddred11', position: 'ГУ ГИБДД', subDepartment: 'Не указан', email: 'ilya.b@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Artemiy_Frolov', code: 'gygibddred11', position: 'ГУ ГИБДД', subDepartment: 'Не указан', email: 'artemiy.f@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Connor_Brenner', code: 'BCHS1YU', position: 'Стажер ОРЛС', subDepartment: 'Не указан', email: 'connor.b@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Vladimir_Zhirinovski', code: 'YO166QZ', position: 'Стажер ОРЛС', subDepartment: 'Не указан', email: 'vladimir.z@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Maksim_Levutskiy', code: 'TK98LST', position: 'Стажер ОРЛС', subDepartment: 'Не указан', email: 'maksim.l@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Vyacheslav_Bortnikov', code: 'AUNX5X', position: 'Стажер ОРЛС', subDepartment: 'Не указан', email: 'vyacheslav.b@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Tyler_Sawyer', code: 'TTNAXFQ', position: 'Стажер ОРЛС', subDepartment: 'Не указан', email: 'tyler.s@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Barbaro_Stone', code: 'RXC24GA', position: 'Стажер ОРЛС', subDepartment: 'Не указан', email: 'barbaro.s@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Alexander_Gyrski', code: 'BCKD2JD', position: 'Стажер ОРЛС', subDepartment: 'Не указан', email: 'alexander.g@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Semen_Diachenco', code: 'SDF2NFF', position: 'Стажер ОРЛС', subDepartment: 'Не указан', email: 'semen.d@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Alexei_Primes', code: 'SBNCJ13', position: 'Стажер ОРЛС', subDepartment: 'Не указан', email: 'alexei.p@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Oleg_Tarat', code: 'HSDXNAA', position: 'Инструктор ОРЛС', subDepartment: 'Не указан', email: 'oleg.t@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Dima_Bardin', code: 'AGSHM1S', position: 'Инструктор ОРЛС', subDepartment: 'Не указан', email: 'dima.b@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Igor_Sotkov', code: 'DEIP11C', position: 'Старший Инструктор ОРЛС', subDepartment: 'Не указан', email: 'igor.s@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Artem_Trocki', code: 'SAJBDSD', position: 'Зам Начальника ОРЛС', subDepartment: 'Не указан', email: 'artem.t@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                    { nickname: 'Tom_Saratovsky', code: 'GIQD1F4', position: 'Зам Начальника ОРЛС', subDepartment: 'Не указан', email: 'tom.s@example.com', internalReprimands: 0, officialReprimands: 0, photoUrl: '' },
+                ];
+                
+                console.log("Adding initial employees to Firestore...");
+                for (const employee of initialEmployees) {
+                    await window.firestore.addDoc(employeesCollectionRef, employee);
+                }
+                console.log("Initial employees added successfully.");
+            }
+        }
+
+        window.onload = () => {
+            updateUIForRole(userRole);
+            checkAccess(userRole);
+            const checkFirebase = setInterval(() => {
+                if (window.db) {
+                    clearInterval(checkFirebase);
+                    if (authorizedRoles.includes(userRole)) {
+                        listenForEmployees();
+                        addInitialEmployees();
+                    }
+                }
+            }, 100);
+        };
+    </script>
+    
+</body>
+</html>
