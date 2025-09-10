@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление Инструментами</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключение Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            transition: all 0.3s ease-in-out;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            .sidebar:hover {
+                width: 250px;
+            }
+            .sidebar .nav-text {
+                display: none;
+            }
+            .sidebar:hover .nav-text {
+                display: inline;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex font-sans text-gray-800">
+
+    <!-- Боковое навигационное меню -->
+    <aside class="sidebar bg-gray-900 text-white p-6 shadow-lg rounded-r-2xl">
+        <div class="flex items-center mb-8">
+            <i class="fas fa-traffic-light text-3xl text-yellow-500 mr-3"></i>
+            <h1 class="text-2xl font-bold nav-text">ГИБДД ОРЛС</h1>
+        </div>
+        <nav>
+            <ul class="space-y-4">
+                <li data-role="all">
+                    <a href="main.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-home text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Главная</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="employee_management.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-users text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление сотрудниками</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="formations.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-chess-knight text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление строями</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="candidates.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-user-tie text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Кандидаты в начальники</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="orls_reports.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-file-invoice text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Отчетность ОРЛС</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="orls_reports_form.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-chart-line text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Сформировка отчетов</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="tools.html" class="flex items-center py-3 px-4 rounded-lg bg-gray-700">
+                        <i class="fas fa-toolbox text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление инструментами</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="attestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-clipboard-check text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Прохождение аттестации</span>
+                    </a>
+                </li>
+                <li data-role="senior_instructor">
+                    <a href="attestation_results.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-poll text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Результаты аттестации</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="attestation_reset.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-undo-alt text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Обнуление аттестации</span>
+                    </a>
+                </li>
+                 <li data-role="all">
+                    <a href="reattestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-sync-alt text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Переаттестации</span>
+                    </a>
+                </li>
+                 <li data-role="all">
+                    <a href="add_attestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-plus-circle text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Аттестации</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="information_department.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-info-circle text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Информационный отдел</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Основное содержимое панели -->
+    <main class="main-content flex-grow p-8">
+        <div class="container mx-auto">
+            <div id="accessDenied" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl relative text-center">
+                <span class="block sm:inline">У вас нет доступа к этой странице.</span>
+            </div>
+            <div id="content" class="bg-white rounded-3xl shadow-lg p-8 hidden">
+                <h2 class="text-4xl font-bold text-gray-900 mb-6">Управление инструментами</h2>
+                <p class="text-gray-600 mb-8">
+                    Здесь вы можете предоставить или отозвать доступ к инструментам ОРЛС для других сотрудников. Все изменения применяются мгновенно.
+                </p>
+                <div id="userListContainer" class="space-y-4">
+                    <!-- Список пользователей будет загружен сюда -->
+                    <p id="loadingMessage" class="text-gray-500 text-center">Загрузка списка сотрудников...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, onSnapshot, collection, doc, updateDoc, getDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // setLogLevel('debug');
+
+        // Глобальные переменные Canvas
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const authToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        let db, auth;
+        let userRole = 'all';
+
+        function showMessage(message, isError = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `p-4 mb-4 rounded-xl text-sm ${isError ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`;
+            messageDiv.textContent = message;
+            document.getElementById('content').prepend(messageDiv);
+            setTimeout(() => messageDiv.remove(), 5000);
+        }
+
+        function checkAccess(role) {
+            const accessDenied = document.getElementById('accessDenied');
+            const content = document.getElementById('content');
+            if (role === 'head') {
+                content.classList.remove('hidden');
+                accessDenied.classList.add('hidden');
+                setupListeners();
+            } else {
+                content.classList.add('hidden');
+                accessDenied.classList.remove('hidden');
+            }
+        }
+
+        async function toggleToolAccess(userId, canAccess) {
+            try {
+                const userDocRef = doc(db, `artifacts/${appId}/public/data/users`, userId);
+                await updateDoc(userDocRef, {
+                    canManageTools: canAccess
+                });
+                showMessage(`Доступ к инструментам для пользователя успешно ${canAccess ? 'предоставлен' : 'отозван'}.`);
+            } catch (error) {
+                console.error("Ошибка при обновлении доступа:", error);
+                showMessage("Ошибка при обновлении доступа. Попробуйте еще раз.", true);
+            }
+        }
+
+        function renderUserList(users) {
+            const userListContainer = document.getElementById('userListContainer');
+            userListContainer.innerHTML = '';
+            
+            if (users.length === 0) {
+                userListContainer.innerHTML = '<p class="text-gray-500 text-center">Сотрудники не найдены.</p>';
+                return;
+            }
+
+            users.forEach(user => {
+                // Исключаем текущего пользователя из списка
+                if (user.userId === auth.currentUser.uid) {
+                    return;
+                }
+
+                const userCard = document.createElement('div');
+                userCard.className = 'bg-white p-6 rounded-2xl shadow-lg flex justify-between items-center';
+                userCard.innerHTML = `
+                    <div>
+                        <h4 class="text-lg font-semibold">${user.username || 'Неизвестный пользователь'}</h4>
+                        <p class="text-sm text-gray-500">ID: ${user.userId}</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" data-user-id="${user.userId}" ${user.canManageTools ? 'checked' : ''} class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-3 text-sm font-medium text-gray-900">Доступ</span>
+                    </label>
+                `;
+
+                const checkbox = userCard.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('change', (event) => {
+                    const userId = event.target.dataset.userId;
+                    const canAccess = event.target.checked;
+                    toggleToolAccess(userId, canAccess);
+                });
+
+                userListContainer.appendChild(userCard);
+            });
+        }
+
+        function setupListeners() {
+            if (!db) return;
+
+            const usersCollection = collection(db, `artifacts/${appId}/public/data/users`);
+            onSnapshot(usersCollection, (snapshot) => {
+                const users = snapshot.docs.map(doc => ({ userId: doc.id, ...doc.data() }));
+                renderUserList(users);
+            }, (error) => {
+                console.error("Ошибка при получении пользователей:", error);
+                showMessage("Ошибка при получении данных пользователей.", true);
+            });
+        }
+
+        async function initializeAppAndListeners() {
+            if (Object.keys(firebaseConfig).length > 0) {
+                const firebaseApp = initializeApp(firebaseConfig);
+                db = getFirestore(firebaseApp);
+                auth = getAuth(firebaseApp);
+                
+                try {
+                    if (authToken) {
+                        await signInWithCustomToken(auth, authToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    
+                    const userId = auth.currentUser.uid;
+                    const userDocRef = doc(db, `artifacts/${appId}/public/data/users`, userId);
+                    const userDoc = await getDoc(userDocRef);
+                    userRole = userDoc.exists() && userDoc.data().role ? userDoc.data().role : 'all';
+                    
+                    checkAccess(userRole);
+                } catch (error) {
+                    console.error("Ошибка аутентификации:", error);
+                    checkAccess('none');
+                }
+            } else {
+                console.error("Firebase config is missing.");
+                checkAccess('none');
+            }
+        }
+        
+        initializeAppAndListeners();
+    </script>
+</body>
+</html>
