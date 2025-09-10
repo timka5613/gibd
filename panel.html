@@ -715,7 +715,7 @@
                 document.getElementById('editTestTitle').value = test.title;
                 const container = document.getElementById('questions-container');
                 container.innerHTML = '';
-                test.questions.forEach((q, index) => {
+                test.questions.forEach((q) => {
                     addQuestionItem(q, container);
                 });
             } catch (error) {
