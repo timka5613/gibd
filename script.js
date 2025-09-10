@@ -238,6 +238,17 @@ app.post('/api/news', async (req, res) => {
     }
 });
 
+// Обнуление базы данных
+app.post('/api/reset', async (req, res) => {
+    try {
+        await mongoose.connection.db.dropDatabase();
+        console.log('База данных успешно очищена.');
+        res.json({ message: 'База данных успешно очищена.' });
+    } catch (err) {
+        res.status(500).json({ message: 'Ошибка при очистке базы данных: ' + err.message });
+    }
+});
+
 
 // ----- Планировщик задач (Cron Job) для автоматического удаления строев -----
 cron.schedule('0 21 * * *', async () => {
