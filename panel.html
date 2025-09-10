@@ -472,7 +472,7 @@
         let currentEditingTestId = null;
         let currentEditingAccountId = null;
         let currentUser = null;
-        const apiUrl = 'http://localhost:3000/api'; // Обновите, если ваш сервер работает на другом порту
+        const apiUrl = 'http://localhost:3000/api';
 
         // --- Утилиты ---
         async function fetchData(endpoint) {
@@ -486,7 +486,6 @@
                 return await response.json();
             } catch (error) {
                 console.error(`Ошибка при получении данных с ${endpoint}:`, error);
-                // alert(`Не удалось получить данные. Проверьте, запущен ли сервер.`);
                 return null;
             }
         }
@@ -505,7 +504,6 @@
                 return await response.json();
             } catch (error) {
                 console.error(`Ошибка при отправке данных на ${endpoint}:`, error);
-                // alert(`Не удалось выполнить действие: ${error.message}`);
                 return null;
             }
         }
@@ -526,7 +524,7 @@
             try {
                 const response = await fetch(`${apiUrl}/status`);
                 const data = await response.json();
-                if (data.isLoggedIn) {
+                if (data.isLoggedIn && data.user) {
                     currentUser = data.user;
                     currentRole = currentUser.role;
                     document.getElementById('userName').textContent = currentUser.nickname;
@@ -552,15 +550,18 @@
 
         function setupPermissions(role) {
             const adminItems = ['manageStaffLink', 'manageCertificationsLink', 'manageParadesLink', 'manageCandidatesLink', 'orlsReportsLink', 'fullResetLink', 'weeklyReportsLink'];
-            const userItems = ['certificationLink', 'certificationResultsLink', 'reports'];
 
+            // Скрываем все элементы по умолчанию
             document.querySelectorAll('.sidebar li').forEach(li => li.style.display = 'none');
+            
+            // Отображаем элементы для всех пользователей
             document.querySelector('.sidebar a[onclick="showTab(\'dashboard\')"]').parentElement.style.display = 'block';
             document.querySelector('.sidebar a[onclick="showTab(\'reports\')"]').parentElement.style.display = 'block';
             document.querySelector('.sidebar a[onclick="logout()"]').parentElement.style.display = 'block';
             document.getElementById('certificationLink').style.display = 'block';
             document.getElementById('certificationResultsLink').style.display = 'block';
 
+            // Отображаем административные элементы для определенных ролей
             if (role === 'Начальник ОРЛС' || role === 'ГУ ГИБДД') {
                 adminItems.forEach(id => {
                     const element = document.getElementById(id);
