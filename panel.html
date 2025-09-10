@@ -38,6 +38,7 @@
         </div>
         <nav class="w-full">
             <ul class="space-y-4">
+                <li><a href="#" class="tab-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200" data-tab="main-page-tab"><i class="fas fa-home mr-2"></i>Главная</a></li>
                 <li><a href="#" class="tab-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200" data-tab="upcoming-events-tab"><i class="fas fa-calendar-alt mr-2"></i>Предстоящие строи</a></li>
                 <li><a href="#" class="tab-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200" data-tab="manage-staff-tab"><i class="fas fa-users-cog mr-2"></i>Управление сотрудниками</a></li>
                 <li><a href="#" class="tab-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200" data-tab="certifications-tab"><i class="fas fa-clipboard-check mr-2"></i>Аттестации/Переаттестации</a></li>
@@ -49,7 +50,17 @@
     </aside>
 
     <main class="main-content p-8">
-        <div id="upcoming-events-tab" class="tab-content active">
+        <div id="main-page-tab" class="tab-content active">
+            <h1 class="text-3xl font-bold mb-6">Главная страница</h1>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-semibold">Новости от руководства</h2>
+                <button onclick="openModal('addNewsModal')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg"><i class="fas fa-plus mr-2"></i>Добавить новость</button>
+            </div>
+            <div id="news-list" class="space-y-4">
+                </div>
+        </div>
+
+        <div id="upcoming-events-tab" class="tab-content">
             <h1 class="text-3xl font-bold mb-6">Предстоящие строи</h1>
             <button onclick="openModal('addEventModal')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mb-4"><i class="fas fa-plus mr-2"></i>Создать строй</button>
             <div id="upcoming-events" class="space-y-4">
@@ -112,6 +123,22 @@
         </div>
     </main>
 
+    <div id="addNewsModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-gray-800 p-8 rounded-lg w-1/3">
+            <h2 class="text-2xl font-bold mb-4">Добавление новости</h2>
+            <input id="newsTitle" type="text" placeholder="Заголовок новости" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
+            <textarea id="newsContent" placeholder="Текст новости" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4 h-32"></textarea>
+            <select id="newsAuthorRole" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
+                <option value="Начальник ОРЛС">Начальник ОРЛС</option>
+                <option value="Зам. начальника ОРЛС">Зам. начальника ОРЛС</option>
+            </select>
+            <div class="flex justify-end space-x-4">
+                <button onclick="addNews()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Сохранить</button>
+                <button onclick="closeModal('addNewsModal')" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Отмена</button>
+            </div>
+        </div>
+    </div>
+    
     <div id="addEventModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
         <div class="bg-gray-800 p-8 rounded-lg w-1/3">
             <h2 class="text-2xl font-bold mb-4">Создание строя</h2>
@@ -248,6 +275,8 @@
                 document.getElementById(tabId).classList.add('active');
                 link.classList.add('bg-gray-700');
                 
+                // Load data based on the active tab
+                if (tabId === 'main-page-tab') loadNews();
                 if (tabId === 'upcoming-events-tab') loadEvents();
                 if (tabId === 'manage-staff-tab') loadEmployees();
                 if (tabId === 'certifications-tab') loadCertifications();
@@ -258,11 +287,62 @@
         });
 
         // --- Функции для взаимодействия с API ---
+
+        // Новости
+        async function loadNews() {
+            try {
+                const response = await fetch(`${API_URL}/news`);
+                if (!response.ok) throw new Error('Ошибка сети при загрузке новостей.');
+                const news = await response.json();
+                const container = document.getElementById('news-list');
+                container.innerHTML = '';
+                news.forEach(item => {
+                    const newsItem = document.createElement('div');
+                    newsItem.className = 'bg-gray-800 p-4 rounded-lg mb-2 shadow-lg';
+                    newsItem.innerHTML = `
+                        <h3 class="text-xl font-bold text-white mb-2">${item.title}</h3>
+                        <p class="text-gray-300">${item.content}</p>
+                        <p class="text-gray-500 text-sm mt-4">
+                            ${item.authorRole} | ${new Date(item.dateCreated).toLocaleDateString('ru-RU')}
+                        </p>
+                    `;
+                    container.appendChild(newsItem);
+                });
+            } catch (error) {
+                console.error('Ошибка при загрузке новостей:', error);
+                alert('Не удалось загрузить новости. Проверьте, запущен ли сервер.');
+            }
+        }
+
+        async function addNews() {
+            const title = document.getElementById('newsTitle').value;
+            const content = document.getElementById('newsContent').value;
+            const authorRole = document.getElementById('newsAuthorRole').value;
+            try {
+                const response = await fetch(`${API_URL}/news`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content, authorRole })
+                });
+                if (response.ok) {
+                    alert('Новость успешно добавлена!');
+                    loadNews();
+                    closeModal('addNewsModal');
+                } else {
+                    const error = await response.json();
+                    alert(`Ошибка при добавлении новости: ${error.message}`);
+                }
+            } catch (error) {
+                console.error('Ошибка при добавлении новости:', error);
+                alert('Ошибка: не удалось подключиться к серверу.');
+            }
+        }
         
         // Сотрудники
         async function loadEmployees() {
             try {
                 const response = await fetch(`${API_URL}/employees`);
+                if (!response.ok) throw new Error('Ошибка сети при загрузке сотрудников.');
                 const employees = await response.json();
                 const tableBody = document.getElementById('employee-list');
                 tableBody.innerHTML = '';
@@ -279,6 +359,7 @@
                 });
             } catch (error) {
                 console.error('Ошибка при загрузке сотрудников:', error);
+                alert('Не удалось загрузить сотрудников. Проверьте, запущен ли сервер.');
             }
         }
 
@@ -303,6 +384,7 @@
                 }
             } catch (error) {
                 console.error('Ошибка при добавлении:', error);
+                alert('Ошибка: не удалось подключиться к серверу.');
             }
         }
 
@@ -310,6 +392,7 @@
         async function loadEvents() {
             try {
                 const response = await fetch(`${API_URL}/events`);
+                if (!response.ok) throw new Error('Ошибка сети при загрузке строев.');
                 const events = await response.json();
                 const container = document.getElementById('upcoming-events');
                 container.innerHTML = '';
@@ -325,6 +408,7 @@
                 });
             } catch (error) {
                 console.error('Ошибка при загрузке строев:', error);
+                alert('Не удалось загрузить строи. Проверьте, запущен ли сервер.');
             }
         }
 
@@ -347,6 +431,7 @@
                 }
             } catch (error) {
                 console.error('Ошибка при создании строя:', error);
+                alert('Ошибка: не удалось подключиться к серверу.');
             }
         }
 
@@ -354,6 +439,7 @@
         async function loadCertifications() {
             try {
                 const response = await fetch(`${API_URL}/certifications`);
+                if (!response.ok) throw new Error('Ошибка сети при загрузке аттестаций.');
                 const certifications = await response.json();
                 const container = document.getElementById('certifications-list');
                 container.innerHTML = '';
@@ -371,6 +457,7 @@
                 });
             } catch (error) {
                 console.error('Ошибка при загрузке аттестаций:', error);
+                alert('Не удалось загрузить аттестации. Проверьте, запущен ли сервер.');
             }
         }
 
@@ -396,6 +483,7 @@
                 }
             } catch (error) {
                 console.error('Ошибка при добавлении аттестации:', error);
+                alert('Ошибка: не удалось подключиться к серверу.');
             }
         }
         
@@ -419,6 +507,7 @@
                 }
             } catch (error) {
                 console.error('Ошибка при добавлении переаттестации:', error);
+                alert('Ошибка: не удалось подключиться к серверу.');
             }
         }
 
@@ -426,6 +515,7 @@
             const nickname = document.getElementById('filter-nickname').value;
             try {
                 const response = await fetch(`${API_URL}/certifications?nickname=${nickname}`);
+                if (!response.ok) throw new Error('Ошибка сети при фильтрации аттестаций.');
                 const certifications = await response.json();
                 const container = document.getElementById('certifications-list');
                 container.innerHTML = '';
@@ -443,6 +533,7 @@
                 });
             } catch (error) {
                 console.error('Ошибка при фильтрации аттестаций:', error);
+                alert('Не удалось отфильтровать аттестации. Проверьте, запущен ли сервер.');
             }
         }
 
@@ -450,6 +541,7 @@
         async function loadReports() {
             try {
                 const response = await fetch(`${API_URL}/reports`);
+                if (!response.ok) throw new Error('Ошибка сети при загрузке отчетов.');
                 const reports = await response.json();
                 const container = document.getElementById('reports-list');
                 container.innerHTML = '';
@@ -464,6 +556,7 @@
                 });
             } catch (error) {
                 console.error('Ошибка при загрузке отчетов:', error);
+                alert('Не удалось загрузить отчеты. Проверьте, запущен ли сервер.');
             }
         }
 
@@ -486,6 +579,7 @@
                 }
             } catch (error) {
                 console.error('Ошибка при подаче отчета:', error);
+                alert('Ошибка: не удалось подключиться к серверу.');
             }
         }
 
@@ -493,6 +587,7 @@
         async function loadInfoBlocks() {
             try {
                 const response = await fetch(`${API_URL}/infoblocks`);
+                if (!response.ok) throw new Error('Ошибка сети при загрузке инфо-блоков.');
                 const infoBlocks = await response.json();
                 const container = document.getElementById('info-blocks-container');
                 container.innerHTML = '';
@@ -508,6 +603,7 @@
                 });
             } catch (error) {
                 console.error('Ошибка при загрузке инфо-блоков:', error);
+                alert('Не удалось загрузить инфо-блоки. Проверьте, запущен ли сервер.');
             }
         }
 
@@ -531,6 +627,7 @@
                 }
             } catch (error) {
                 console.error('Ошибка при добавлении инфо-блока:', error);
+                alert('Ошибка: не удалось подключиться к серверу.');
             }
         }
         
@@ -538,6 +635,7 @@
         async function loadTests() {
             try {
                 const response = await fetch(`${API_URL}/tests`);
+                if (!response.ok) throw new Error('Ошибка сети при загрузке тестов.');
                 const tests = await response.json();
                 const container = document.getElementById('tests-list');
                 container.innerHTML = '';
@@ -558,6 +656,7 @@
                 });
             } catch (error) {
                 console.error('Ошибка при загрузке тестов:', error);
+                alert('Не удалось загрузить тесты. Проверьте, запущен ли сервер.');
             }
         }
 
@@ -579,6 +678,7 @@
                 }
             } catch (error) {
                 console.error('Ошибка при создании теста:', error);
+                alert('Ошибка: не удалось подключиться к серверу.');
             }
         }
 
@@ -587,6 +687,7 @@
             openModal('editTestModal');
             try {
                 const response = await fetch(`${API_URL}/tests/${testId}`);
+                if (!response.ok) throw new Error('Ошибка сети при загрузке теста для редактирования.');
                 const test = await response.json();
                 document.getElementById('editTestTitle').value = test.title;
                 const container = document.getElementById('questions-container');
@@ -685,10 +786,10 @@
 
         // Загрузка данных при инициализации
         window.onload = function() {
-            const firstTabLink = document.querySelector('.tab-link');
-            if (firstTabLink) {
-                firstTabLink.click();
-            }
+            // Активируем вкладку "Главная" при загрузке страницы
+            document.getElementById('main-page-tab').classList.add('active');
+            document.querySelector('[data-tab="main-page-tab"]').classList.add('bg-gray-700');
+            loadNews();
         };
     </script>
 </body>
