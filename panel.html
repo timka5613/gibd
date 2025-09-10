@@ -58,6 +58,10 @@
             </div>
             <div id="news-list" class="space-y-4">
                 </div>
+            <div class="mt-8">
+                <h2 class="text-2xl font-semibold mb-4">Администрирование</h2>
+                <button onclick="resetDatabase()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">Полное обнуление базы данных</button>
+            </div>
         </div>
 
         <div id="upcoming-events-tab" class="tab-content">
@@ -287,7 +291,26 @@
         });
 
         // --- Функции для взаимодействия с API ---
-
+        
+        // Полное обнуление
+        async function resetDatabase() {
+            if (confirm('ВНИМАНИЕ: Вы уверены, что хотите полностью очистить базу данных? Это действие необратимо!')) {
+                try {
+                    const response = await fetch(`${API_URL}/reset`, { method: 'POST' });
+                    if (response.ok) {
+                        alert('База данных успешно очищена!');
+                        window.location.reload();
+                    } else {
+                        const error = await response.json();
+                        alert(`Ошибка: ${error.message}`);
+                    }
+                } catch (error) {
+                    console.error('Ошибка при сбросе базы данных:', error);
+                    alert('Ошибка: не удалось подключиться к серверу для сброса данных.');
+                }
+            }
+        }
+        
         // Новости
         async function loadNews() {
             try {
