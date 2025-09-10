@@ -8,6 +8,41 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Подключение Font Awesome для иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Подключение Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, where, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Глобальные переменные Canvas, предоставляемые средой
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const authToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        if (Object.keys(firebaseConfig).length > 0) {
+            window.firebaseApp = initializeApp(firebaseConfig);
+            window.db = getFirestore(window.firebaseApp);
+            window.auth = getAuth(window.firebaseApp);
+
+            if (authToken) {
+                signInWithCustomToken(window.auth, authToken);
+            } else {
+                signInAnonymously(window.auth);
+            }
+        }
+
+        // Экспортируем функции для доступа из других скриптов
+        window.firestore = {
+            onSnapshot,
+            collection,
+            query,
+            addDoc,
+            getDocs,
+            deleteDoc
+        };
+
+        console.log("Firebase initialized and ready to use.");
+    </script>
     <style>
         .sidebar {
             width: 250px;
@@ -88,7 +123,7 @@
                         <span class="font-semibold nav-text">Прохождение аттестации</span>
                     </a>
                 </li>
-                <li data-role="all">
+                <li data-role="senior_instructor">
                     <a href="attestation_results.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
                         <i class="fas fa-poll text-xl mr-4"></i>
                         <span class="font-semibold nav-text">Результаты аттестации</span>
@@ -128,13 +163,6 @@
             <div class="bg-white rounded-3xl shadow-lg p-8">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-4xl font-bold text-gray-900">Добро пожаловать</h2>
-                    <div class="flex items-center space-x-2">
-                        <span class="text-sm font-semibold text-gray-600">Ваша роль:</span>
-                        <select id="roleSelector" class="px-3 py-1 rounded-lg border border-gray-300">
-                            <option value="deputy_head">Зам Начальника ОРЛС</option>
-                            <option value="instructor">Стажер/Инструктор/Ст.Инструктор</option>
-                        </select>
-                    </div>
                 </div>
                 <p class="text-lg text-gray-600 mb-6">
                     Это центральная панель для управления всеми ключевыми процессами. Используйте навигационное меню слева, чтобы перейти в нужный раздел.
@@ -179,55 +207,130 @@
                         <p class="text-sm opacity-80">Важные объявления и полезная информация для всех.</p>
                     </a>
                 </div>
+
+                <!-- Новый раздел для действующих строев -->
+                <div class="mt-10 p-6 bg-gray-50 rounded-2xl shadow-inner">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-4">Действующие строи</h3>
+                    <div id="activeFormations" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Здесь будут отображаться строи -->
+                    </div>
+                    <div class="flex space-x-4 mt-6">
+                        <button id="addFormationBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Добавить тестовый строй</button>
+                        <button id="clearFormationsBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Очистить все строи</button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </main>
 
-    <script>
+    <script type="module">
         const navItems = document.querySelectorAll('aside nav li');
-        const roleSelector = document.getElementById('roleSelector');
         const cards = document.querySelectorAll('main a[data-role-card]');
+        const activeFormationsContainer = document.getElementById('activeFormations');
+        const addFormationBtn = document.getElementById('addFormationBtn');
+        const clearFormationsBtn = document.getElementById('clearFormationsBtn');
+
+        // Эту переменную необходимо инициализировать на стороне сервера в зависимости от роли пользователя.
+        // Для примера, она жестко задана.
+        const userRole = 'deputy_head'; // Возможные значения: 'deputy_head', 'instructor', 'senior_instructor'
 
         function updateUIForRole(role) {
-            // Массив соответствия ролей и видимых элементов
             const rolesMap = {
                 'deputy_head': ['all', 'deputy_head'],
-                'instructor': ['all']
+                'instructor': ['all'],
+                'senior_instructor': ['all', 'senior_instructor']
             };
-
-            // Определяем, какие роли разрешены для текущей роли
             const allowedRoles = rolesMap[role] || [];
             
-            // Обновляем навигационное меню
             navItems.forEach(item => {
                 const itemRole = item.dataset.role;
-                if (allowedRoles.includes(itemRole)) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
+                item.style.display = allowedRoles.includes(itemRole) ? 'block' : 'none';
             });
-
-            // Обновляем карточки на главной панели
             cards.forEach(card => {
                 const cardRole = card.dataset.roleCard;
-                if (allowedRoles.includes(cardRole)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
+                card.style.display = allowedRoles.includes(cardRole) ? 'block' : 'none';
+            });
+        }
+        
+        // Listen for changes to the formations collection in real-time
+        async function listenForFormations() {
+            if (!window.db) {
+                console.error("Firebase Firestore is not initialized.");
+                return;
+            }
+
+            const formationsCollection = window.firestore.collection(window.db, `artifacts/${window.__app_id}/public/data/formations`);
+            
+            window.firestore.onSnapshot(formationsCollection, (snapshot) => {
+                if (snapshot.empty) {
+                    activeFormationsContainer.innerHTML = '<p class="text-gray-500">На данный момент действующих строев нет.</p>';
+                    return;
                 }
+
+                activeFormationsContainer.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const formation = doc.data();
+                    const formationCard = document.createElement('div');
+                    formationCard.className = 'bg-white p-4 rounded-lg shadow-md';
+                    formationCard.innerHTML = `
+                        <h4 class="text-xl font-bold mb-2">${formation.name}</h4>
+                        <p class="text-sm text-gray-600"><strong>Участники:</strong> ${formation.members}</p>
+                        <p class="text-sm text-gray-600"><strong>Руководитель:</strong> ${formation.leader}</p>
+                        <p class="text-sm text-gray-600"><strong>Начало:</strong> ${formation.startTime}</p>
+                    `;
+                    activeFormationsContainer.appendChild(formationCard);
+                });
+            }, (error) => {
+                console.error("Error listening to formations:", error);
             });
         }
 
-        // Обработчик события для смены роли через выпадающее меню
-        roleSelector.addEventListener('change', (event) => {
-            const selectedRole = event.target.value;
-            updateUIForRole(selectedRole);
+        // Add a test formation to the database
+        addFormationBtn.addEventListener('click', async () => {
+            const formationsCollection = window.firestore.collection(window.db, `artifacts/${window.__app_id}/public/data/formations`);
+            const now = new Date();
+            const formationData = {
+                name: `Тестовый строй #${Math.floor(Math.random() * 100)}`,
+                members: Math.floor(Math.random() * 20) + 1,
+                leader: "Тестовый руководитель",
+                startTime: now.getHours() + ':' + now.getMinutes()
+            };
+            try {
+                await window.firestore.addDoc(formationsCollection, formationData);
+                console.log("Formation added successfully.");
+            } catch (e) {
+                console.error("Error adding formation: ", e);
+            }
         });
 
-        // Начальная установка UI при загрузке страницы
+        // Clear all formations from the database
+        clearFormationsBtn.addEventListener('click', async () => {
+            if (!confirm("Вы уверены, что хотите удалить все действующие строи?")) return;
+            const formationsCollectionRef = window.firestore.collection(window.db, `artifacts/${window.__app_id}/public/data/formations`);
+            try {
+                const snapshot = await window.firestore.getDocs(formationsCollectionRef);
+                const batch = window.firestore.db.runTransaction(async (transaction) => {
+                    snapshot.forEach((doc) => {
+                        transaction.delete(doc.ref);
+                    });
+                });
+                await batch;
+                console.log("All formations cleared.");
+            } catch (e) {
+                console.error("Error clearing formations: ", e);
+            }
+        });
+
         window.onload = () => {
-            updateUIForRole(roleSelector.value);
+            updateUIForRole(userRole);
+            // Wait for Firebase to be initialized before starting the listener
+            const checkFirebase = setInterval(() => {
+                if (window.db) {
+                    clearInterval(checkFirebase);
+                    listenForFormations();
+                }
+            }, 100);
         };
     </script>
     
