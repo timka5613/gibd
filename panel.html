@@ -3,525 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ГИБДД ОРЛС</title>
-    <!-- Подключение Tailwind CSS для стилей -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Главная панель ГИБДД</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Подключение Font Awesome для иконок -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Общие стили для макета */
-        .sidebar { width: 250px; min-height: 100vh; }
-        .main-content { width: calc(100% - 250px); min-height: 100vh; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        /* Стили для модальных окон */
-        .modal {
-            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
-            opacity: 0;
-            visibility: hidden;
-            background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            transition: all 0.3s ease-in-out;
         }
-        .modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Дополнительные стили для элементов */
-        .question-item {
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        .question-item button {
-            margin-left: 0.5rem;
-        }
-        .rank-image {
-            width: 30px; /* Размер изображения звания */
-            height: auto;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            .sidebar:hover {
+                width: 250px;
+            }
+            .sidebar .nav-text {
+                display: none;
+            }
+            .sidebar:hover .nav-text {
+                display: inline;
+            }
         }
     </style>
 </head>
-<body id="panel-page" class="flex bg-gray-100 font-sans">
+<body class="bg-gray-100 flex font-sans text-gray-800">
 
-    <!-- Загрузочный экран -->
-    <div id="loading-overlay" class="loading-overlay">
-        <i class="fas fa-spinner fa-spin text-4xl text-blue-500"></i>
-    </div>
-
-    <!-- Модальное окно для ввода специального кода (для входа) -->
-    <div id="specialCodeModal" class="modal fixed inset-0 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 modal-content">
-            <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Подтверждение доступа</h2>
-            <form id="specialCodeForm">
-                <div class="mb-6">
-                    <label for="specialCodeInput" class="block text-gray-700 font-semibold mb-2">Введите специальный код:</label>
-                    <input type="password" id="specialCodeInput" name="specialCode" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
-                </div>
-                <div class="flex items-center justify-center">
-                    <button type="submit" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 w-full">Подтвердить</button>
-                </div>
-            </form>
+    <!-- Боковое навигационное меню -->
+    <aside class="sidebar bg-gray-900 text-white p-6 shadow-lg rounded-r-2xl">
+        <div class="flex items-center mb-8">
+            <i class="fas fa-traffic-light text-3xl text-yellow-500 mr-3"></i>
+            <h1 class="text-2xl font-bold nav-text">ГИБДД ОРЛС</h1>
         </div>
-    </div>
-
-    <!-- Основной контент и боковая панель -->
-    <div class="sidebar bg-white p-6 shadow-2xl flex flex-col justify-between rounded-r-3xl transition-all duration-300 hidden">
-        <div class="flex-grow">
-            <h1 class="text-3xl font-extrabold mb-8 text-center text-gray-900">ГИБДД</h1>
-            <ul id="sidebar-menu">
-                <li class="mb-3">
-                    <a href="#" onclick="showTab('dashboard')" class="flex items-center text-gray-700 hover:bg-blue-100 p-3 rounded-xl transition-colors duration-200">
-                        <i class="fas fa-home mr-4 text-xl"></i><span class="font-medium">Панель управления</span>
+        <nav>
+            <ul class="space-y-4">
+                <li data-role="all">
+                    <a href="main.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-home text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Главная</span>
                     </a>
                 </li>
-                <li id="manageStaffLink" class="mb-3 hidden">
-                    <a href="#" onclick="showTab('manage-staff')" class="flex items-center text-gray-700 hover:bg-blue-100 p-3 rounded-xl transition-colors duration-200">
-                        <i class="fas fa-users mr-4 text-xl"></i><span class="font-medium">Управление составом</span>
+                <li data-role="deputy_head">
+                    <a href="employee_management.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-users text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление сотрудниками</span>
                     </a>
                 </li>
-                <li id="manageCertificationsLink" class="mb-3 hidden">
-                    <a href="#" onclick="showTab('manage-certifications')" class="flex items-center text-gray-700 hover:bg-blue-100 p-3 rounded-xl transition-colors duration-200">
-                        <i class="fas fa-certificate mr-4 text-xl"></i><span class="font-medium">Управление аттестациями</span>
+                <li data-role="all">
+                    <a href="formations.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-chess-knight text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление строями</span>
                     </a>
                 </li>
-                <li id="manageParadesLink" class="mb-3 hidden">
-                    <a href="#" onclick="showTab('manage-parades')" class="flex items-center text-gray-700 hover:bg-blue-100 p-3 rounded-xl transition-colors duration-200">
-                        <i class="fas fa-bullhorn mr-4 text-xl"></i><span class="font-medium">Управление строями</span>
+                <li data-role="all">
+                    <a href="candidates.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-user-tie text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Кандидаты в начальники</span>
                     </a>
                 </li>
-                <li id="manageCandidatesLink" class="mb-3 hidden">
-                    <a href="#" onclick="showTab('manage-candidates')" class="flex items-center text-gray-700 hover:bg-blue-100 p-3 rounded-xl transition-colors duration-200">
-                        <i class="fas fa-user-plus mr-4 text-xl"></i><span class="font-medium">Кандидаты на начальника</span>
+                <li data-role="all">
+                    <a href="orls_reports.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-file-invoice text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Отчетность ОРЛС</span>
                     </a>
                 </li>
-                <li id="certificationResultsLink" class="mb-3 hidden">
-                    <a href="#" onclick="showTab('certification-results')" class="flex items-center text-gray-700 hover:bg-blue-100 p-3 rounded-xl transition-colors duration-200">
-                        <i class="fas fa-award mr-4 text-xl"></i><span class="font-medium">Результаты аттестаций</span>
+                <li data-role="deputy_head">
+                    <a href="orls_reports_form.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-chart-line text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Сформировка отчетов</span>
                     </a>
                 </li>
-                <li id="reportsLink" class="mb-3 hidden">
-                    <a href="#" onclick="showTab('reports')" class="flex items-center text-gray-700 hover:bg-blue-100 p-3 rounded-xl transition-colors duration-200">
-                        <i class="fas fa-file-alt mr-4 text-xl"></i><span class="font-medium">Мои отчеты и неактивы</span>
+                <li data-role="deputy_head">
+                    <a href="tools.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-toolbox text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление инструментами</span>
                     </a>
                 </li>
-                <li id="orlsReportsLink" class="mb-3 hidden">
-                    <a href="#" onclick="showTab('orls-reports')" class="flex items-center text-gray-700 hover:bg-blue-100 p-3 rounded-xl transition-colors duration-200">
-                        <i class="fas fa-folder-open mr-4 text-xl"></i><span class="font-medium">Заявления и неактивы</span>
+                <li data-role="all">
+                    <a href="attestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-clipboard-check text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Прохождение аттестации</span>
                     </a>
                 </li>
-                <li id="weeklyReportsLink" class="mb-3 hidden">
-                    <a href="#" onclick="showTab('weekly-reports')" class="flex items-center text-gray-700 hover:bg-blue-100 p-3 rounded-xl transition-colors duration-200">
-                        <i class="fas fa-chart-line mr-4 text-xl"></i><span class="font-medium">Отчеты за неделю</span>
+                <li data-role="all">
+                    <a href="attestation_results.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-poll text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Результаты аттестации</span>
                     </a>
                 </li>
-                <li id="certificationLink" class="mb-3 hidden">
-                    <a href="#" onclick="showTab('certification')" class="flex items-center text-gray-700 hover:bg-blue-100 p-3 rounded-xl transition-colors duration-200">
-                        <i class="fas fa-clipboard-check mr-4 text-xl"></i><span class="font-medium">Пройти аттестацию</span>
+                <li data-role="deputy_head">
+                    <a href="attestation_reset.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-undo-alt text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Обнуление аттестации</span>
+                    </a>
+                </li>
+                 <li data-role="all">
+                    <a href="reattestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-sync-alt text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Переаттестации</span>
+                    </a>
+                </li>
+                 <li data-role="all">
+                    <a href="add_attestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-plus-circle text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Аттестации</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="information_department.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-info-circle text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Информационный отдел</span>
                     </a>
                 </li>
             </ul>
-        </div>
-        <div class="mt-8 border-t border-gray-200 pt-6">
-            <div class="flex items-center p-2 rounded-lg bg-gray-50">
-                <i class="fas fa-user-circle text-4xl mr-4 text-gray-400"></i>
-                <div>
-                    <p id="userName" class="font-extrabold text-gray-900">Имя пользователя</p>
-                    <p id="userRole" class="text-sm text-gray-500">Роль</p>
-                </div>
-            </div>
-            <a href="#" onclick="logout()" class="mt-4 block w-full text-center bg-red-500 text-white font-semibold py-3 rounded-lg hover:bg-red-600 transition-colors duration-200 transform hover:scale-105">Выйти</a>
-        </div>
-    </div>
+        </nav>
+    </aside>
 
-    <!-- Область контента для вкладок -->
-    <div class="main-content p-10 overflow-y-auto hidden">
-        <h1 class="text-4xl font-extrabold mb-8 text-gray-800">Панель управления ГИБДД</h1>
-
-        <!-- Панель управления -->
-        <div id="dashboard" class="tab-content active transition-all duration-300 ease-in-out">
-            <h2 class="text-2xl font-bold mb-6 text-gray-700">Обзор</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div class="bg-white p-8 rounded-2xl shadow-lg">
-                    <h3 class="text-lg font-semibold text-gray-600">Всего аккаунтов</h3>
-                    <p id="totalAccounts" class="text-5xl font-extrabold text-blue-600 mt-2">0</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-lg">
-                    <h3 class="text-lg font-semibold text-gray-600">Всего тестов</h3>
-                    <p id="totalTests" class="text-5xl font-extrabold text-green-600 mt-2">0</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-lg">
-                    <h3 class="text-lg font-semibold text-gray-600">Пройдено аттестаций</h3>
-                    <p id="completedCertifications" class="text-5xl font-extrabold text-purple-600 mt-2">0</p>
-                </div>
-            </div>
-            <h2 class="text-2xl font-bold mb-6 text-gray-700">Предстоящие строи</h2>
-            <ul id="upcomingParadesList" class="bg-white p-8 rounded-2xl shadow-lg space-y-4">
-                <!-- Список строев будет здесь -->
-            </ul>
-        </div>
-
-        <!-- Управление составом -->
-        <div id="manage-staff" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6 text-gray-700">Управление составом</h2>
-            <div class="flex justify-between items-center mb-6">
-                <button onclick="openModal('addAccountModal')" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-200">Добавить аккаунт</button>
-                <div class="flex items-center">
-                    <label for="position-filter" class="mr-3 text-gray-700 font-medium">Фильтр по должности:</label>
-                    <select id="position-filter" class="p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-                        <option value="all">Все</option>
-                    </select>
-                </div>
-            </div>
-            <div class="bg-white p-8 rounded-2xl shadow-lg overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="py-4 px-6 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ID</th>
-                            <th class="py-4 px-6 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Никнейм</th>
-                            <th class="py-4 px-6 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Должность</th>
-                            <th class="py-4 px-6 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Последняя активность</th>
-                            <th class="py-4 px-6 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody id="accountsTableBody" class="bg-white divide-y divide-gray-200">
-                        <!-- Данные аккаунтов будут здесь -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Управление аттестациями -->
-        <div id="manage-certifications" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6 text-gray-700">Управление аттестациями</h2>
-            <button onclick="openModal('addTestModal')" class="bg-green-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-700 transition-colors duration-200 mb-6">Создать новый тест</button>
-            <ul id="testsList" class="bg-white p-8 rounded-2xl shadow-lg space-y-4">
-                <!-- Список тестов будет здесь -->
-            </ul>
-        </div>
-
-        <!-- Управление строями -->
-        <div id="manage-parades" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6 text-gray-700">Управление строями</h2>
-            <button onclick="openModal('addParadeModal')" class="bg-green-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-700 transition-colors duration-200 mb-6">Запланировать строй</button>
-            <ul id="paradesList" class="bg-white p-8 rounded-2xl shadow-lg space-y-4">
-                <!-- Список строев будет здесь -->
-            </ul>
-        </div>
-
-        <!-- Кандидаты на начальника -->
-        <div id="manage-candidates" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6 text-gray-700">Кандидаты на начальника</h2>
-            <ul id="candidatesList" class="bg-white p-8 rounded-2xl shadow-lg space-y-4">
-                <!-- Список кандидатов будет здесь -->
-            </ul>
-        </div>
-
-        <!-- Результаты аттестаций -->
-        <div id="certification-results" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6 text-gray-700">Результаты аттестаций</h2>
-            <div class="bg-white p-8 rounded-2xl shadow-lg overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="py-4 px-6 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Сотрудник</th>
-                            <th class="py-4 px-6 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Тест</th>
-                            <th class="py-4 px-6 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Дата прохождения</th>
-                            <th class="py-4 px-6 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Результат</th>
-                            <th class="py-4 px-6 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody id="resultsTableBody" class="bg-white divide-y divide-gray-200">
-                        <!-- Данные результатов будут здесь -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Мои отчеты и неактивы -->
-        <div id="reports" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6 text-gray-700">Мои отчеты и неактивы</h2>
-            <div class="flex mb-6 space-x-4">
-                <button onclick="openModal('reportModal')" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-200">Подать отчет</button>
-                <button onclick="openModal('inactiveModal')" class="bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-orange-700 transition-colors duration-200">Оставить неактив</button>
-            </div>
-            <div class="bg-white p-8 rounded-2xl shadow-lg mb-6">
-                <h3 class="text-lg font-semibold mb-4 text-gray-700">Мои отчеты</h3>
-                <ul id="myReportsList" class="space-y-4"></ul>
-            </div>
-            <div class="bg-white p-8 rounded-2xl shadow-lg">
-                <h3 class="text-lg font-semibold mb-4 text-gray-700">Мои неактивы</h3>
-                <ul id="myInactivesList" class="space-y-4"></ul>
-            </div>
-        </div>
-
-        <!-- Заявления и неактивы (для руководства) -->
-        <div id="orls-reports" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6 text-gray-700">Все заявления и неактивы</h2>
-            <div class="bg-white p-8 rounded-2xl shadow-lg mb-6">
-                <h3 class="text-lg font-semibold mb-4 text-gray-700">Заявления</h3>
-                <ul id="allReportsList" class="space-y-4"></ul>
-            </div>
-            <div class="bg-white p-8 rounded-2xl shadow-lg">
-                <h3 class="text-lg font-semibold mb-4 text-gray-700">Неактивы</h3>
-                <ul id="allInactivesList" class="space-y-4"></ul>
-            </div>
-        </div>
-
-        <!-- Отчеты за неделю -->
-        <div id="weekly-reports" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6 text-gray-700">Отчеты за неделю</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div class="bg-white p-8 rounded-2xl shadow-lg">
-                    <h3 class="text-lg font-semibold text-gray-600">Пройдено аттестаций</h3>
-                    <p id="weeklyCertifications" class="text-5xl font-extrabold text-purple-600 mt-2">0</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-lg">
-                    <h3 class="text-lg font-semibold text-gray-600">Заявлений</h3>
-                    <p id="weeklyReports" class="text-5xl font-extrabold text-blue-600 mt-2">0</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-lg">
-                    <h3 class="text-lg font-semibold text-gray-600">Неактивов</h3>
-                    <p id="weeklyInactives" class="text-5xl font-extrabold text-orange-600 mt-2">0</p>
-                </div>
-            </div>
-            <h3 class="text-lg font-semibold mb-4 text-gray-700">Активность</h3>
-            <ul id="weeklyActivityList" class="bg-white p-8 rounded-2xl shadow-lg space-y-4">
-                <!-- Список активности будет здесь -->
-            </ul>
-        </div>
-
-        <!-- Пройти аттестацию -->
-        <div id="certification" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6 text-gray-700">Аттестация</h2>
-            <ul id="traineeTestsList" class="bg-white p-8 rounded-2xl shadow-lg space-y-4">
-                <!-- Список назначенных тестов будет здесь -->
-            </ul>
-        </div>
-    </div>
-
-    <!-- Модальные окна для форм -->
-    
-    <!-- Модальное окно: Добавить аккаунт -->
-    <div id="addAccountModal" class="modal fixed inset-0 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 modal-content">
-            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Добавить аккаунт</h2>
-            <form id="addAccountForm">
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Никнейм:</label>
-                    <input type="text" name="nickname" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Должность:</label>
-                    <input type="text" name="role" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Код авторизации:</label>
-                    <input type="password" name="auth_code" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-semibold mb-2">Специальный код:</label>
-                    <input type="password" name="special_code" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
-                </div>
-                <div class="flex justify-end space-x-4">
-                    <button type="button" onclick="closeModal('addAccountModal')" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-500 transition-colors">Отмена</button>
-                    <button type="submit" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">Добавить</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Модальное окно: Редактировать аккаунт -->
-    <div id="editAccountModal" class="modal fixed inset-0 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 modal-content">
-            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Редактировать аккаунт</h2>
-            <form id="editAccountForm">
-                <input type="hidden" id="editAccountId">
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Никнейм:</label>
-                    <input type="text" id="editAccountNickname" name="nickname" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Должность:</label>
-                    <input type="text" id="editAccountRole" name="role" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Код авторизации:</label>
-                    <input type="password" id="editAccountCode" name="auth_code" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-semibold mb-2">Специальный код:</label>
-                    <input type="password" id="editSpecialCode" name="special_code" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
-                </div>
-                <div class="flex justify-between items-center mt-6">
-                    <button type="button" onclick="openModal('assignTestModal')" class="bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors">Назначить тест</button>
-                    <div class="space-x-4">
-                        <button type="button" onclick="closeModal('editAccountModal')" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-500 transition-colors">Отмена</button>
-                        <button type="submit" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">Сохранить</button>
+    <!-- Основное содержимое панели -->
+    <main class="main-content flex-grow p-8">
+        <div class="container mx-auto">
+            <div class="bg-white rounded-3xl shadow-lg p-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-4xl font-bold text-gray-900">Добро пожаловать</h2>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm font-semibold text-gray-600">Ваша роль:</span>
+                        <select id="roleSelector" class="px-3 py-1 rounded-lg border border-gray-300">
+                            <option value="deputy_head">Зам Начальника ОРЛС</option>
+                            <option value="instructor">Стажер/Инструктор/Ст.Инструктор</option>
+                        </select>
                     </div>
                 </div>
-            </form>
-        </div>
-    </div>
+                <p class="text-lg text-gray-600 mb-6">
+                    Это центральная панель для управления всеми ключевыми процессами. Используйте навигационное меню слева, чтобы перейти в нужный раздел.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Карточки, которые будут динамически скрываться/отображаться -->
+                    <a href="main.html" data-role-card="all" class="bg-gray-600 hover:bg-gray-700 text-white font-bold p-6 rounded-2xl shadow-md transition-transform transform hover:scale-105">
+                        <i class="fas fa-home text-3xl mb-4"></i>
+                        <h3 class="text-xl">Главная</h3>
+                        <p class="text-sm opacity-80">Просмотр ближайших строев и доступных кнопок.</p>
+                    </a>
 
-    <!-- Модальное окно: Назначить тест -->
-    <div id="assignTestModal" class="modal fixed inset-0 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 modal-content">
-            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Назначить аттестацию</h2>
-            <form id="assignTestForm">
-                <input type="hidden" id="assignTestAccountId">
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Выберите тест:</label>
-                    <select id="assignTestSelect" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required></select>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-semibold mb-2">Время на прохождение (минут):</label>
-                    <input type="number" id="testTimeInput" name="testTime" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" value="15" required>
-                </div>
-                <div class="flex justify-end space-x-4">
-                    <button type="button" onclick="closeModal('assignTestModal')" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-500 transition-colors">Отмена</button>
-                    <button type="submit" class="bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors">Назначить</button>
-                </div>
-            </form>
-        </div>
-    </div>
+                    <a href="employee_management.html" data-role-card="deputy_head" class="bg-blue-500 hover:bg-blue-600 text-white font-bold p-6 rounded-2xl shadow-md transition-transform transform hover:scale-105">
+                        <i class="fas fa-users text-3xl mb-4"></i>
+                        <h3 class="text-xl">Управление сотрудниками</h3>
+                        <p class="text-sm opacity-80">Просмотр и редактирование данных сотрудников, включая таблицу штата.</p>
+                    </a>
+                    
+                    <a href="attestation.html" data-role-card="all" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold p-6 rounded-2xl shadow-md transition-transform transform hover:scale-105">
+                        <i class="fas fa-clipboard-check text-3xl mb-4"></i>
+                        <h3 class="text-xl">Прохождение аттестации</h3>
+                        <p class="text-sm opacity-80">Перейти к сдаче аттестационного теста.</p>
+                    </a>
 
-    <!-- Модальное окно: Добавить новый тест -->
-    <div id="addTestModal" class="modal fixed inset-0 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 modal-content">
-            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Создать новый тест</h2>
-            <form id="addTestForm">
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Название теста:</label>
-                    <input type="text" name="testName" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
+                    <a href="orls_reports.html" data-role-card="all" class="bg-green-500 hover:bg-green-600 text-white font-bold p-6 rounded-2xl shadow-md transition-transform transform hover:scale-105">
+                        <i class="fas fa-file-invoice text-3xl mb-4"></i>
+                        <h3 class="text-xl">Отчетность ОРЛС</h3>
+                        <p class="text-sm opacity-80">Подача и одобрение отчетов и неактива.</p>
+                    </a>
+                    
+                    <a href="orls_reports_form.html" data-role-card="deputy_head" class="bg-orange-500 hover:bg-orange-600 text-white font-bold p-6 rounded-2xl shadow-md transition-transform transform hover:scale-105">
+                        <i class="fas fa-chart-line text-3xl mb-4"></i>
+                        <h3 class="text-xl">Сформировка отчетов</h3>
+                        <p class="text-sm opacity-80">Сводная статистика по неактивам и принятым аттестациям.</p>
+                    </a>
+                    
+                    <a href="information_department.html" data-role-card="all" class="bg-teal-500 hover:bg-teal-600 text-white font-bold p-6 rounded-2xl shadow-md transition-transform transform hover:scale-105">
+                        <i class="fas fa-info-circle text-3xl mb-4"></i>
+                        <h3 class="text-xl">Информационный отдел</h3>
+                        <p class="text-sm opacity-80">Важные объявления и полезная информация для всех.</p>
+                    </a>
                 </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-semibold mb-2">Описание:</label>
-                    <textarea name="description" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" rows="3" required></textarea>
-                </div>
-                <div class="flex justify-end space-x-4">
-                    <button type="button" onclick="closeModal('addTestModal')" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-500 transition-colors">Отмена</button>
-                    <button type="submit" class="bg-green-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-700 transition-colors">Создать</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Модальное окно: Редактировать тест -->
-    <div id="editTestModal" class="modal fixed inset-0 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-2xl max-h-screen overflow-y-auto transform transition-all duration-300 scale-95 modal-content">
-            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Редактировать тест: <span id="editTestName" class="text-blue-600"></span></h2>
-            <div id="questionsContainer" class="mb-6 space-y-4">
-                <!-- Вопросы будут загружены сюда динамически -->
-            </div>
-            <div class="mb-6">
-                <button type="button" onclick="addQuestion()" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">Добавить вопрос</button>
-            </div>
-            <div class="flex justify-end space-x-4">
-                <button type="button" onclick="closeModal('editTestModal')" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-500 transition-colors">Отмена</button>
-                <button type="button" onclick="saveEditedTest()" class="bg-green-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-700 transition-colors">Сохранить</button>
             </div>
         </div>
-    </div>
+    </main>
 
-    <!-- Модальное окно: Запланировать строй -->
-    <div id="addParadeModal" class="modal fixed inset-0 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 modal-content">
-            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Запланировать строй</h2>
-            <form id="addParadeForm">
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Подразделение:</label>
-                    <input type="text" name="department" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Время строя:</label>
-                    <input type="time" name="paradeTime" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-semibold mb-2">Текст строя:</label>
-                    <textarea name="paradeText" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" rows="3" required></textarea>
-                </div>
-                <div class="flex justify-end space-x-4">
-                    <button type="button" onclick="closeModal('addParadeModal')" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-500 transition-colors">Отмена</button>
-                    <button type="submit" class="bg-green-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-700 transition-colors">Запланировать</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <script>
+        const navItems = document.querySelectorAll('aside nav li');
+        const roleSelector = document.getElementById('roleSelector');
+        const cards = document.querySelectorAll('main a[data-role-card]');
 
-    <!-- Модальное окно: Подать отчет -->
-    <div id="reportModal" class="modal fixed inset-0 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 modal-content">
-            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Подать отчет</h2>
-            <form id="reportForm">
-                <input type="hidden" id="reportUserRole">
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Тема:</label>
-                    <input type="text" name="reportSubject" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-semibold mb-2">Текст отчета:</label>
-                    <textarea name="reportText" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" rows="5" required></textarea>
-                </div>
-                <div class="flex justify-end space-x-4">
-                    <button type="button" onclick="closeModal('reportModal')" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-500 transition-colors">Отмена</button>
-                    <button type="submit" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">Отправить</button>
-                </div>
-            </form>
-        </div>
-    </div>
+        function updateUIForRole(role) {
+            // Массив соответствия ролей и видимых элементов
+            const rolesMap = {
+                'deputy_head': ['all', 'deputy_head'],
+                'instructor': ['all']
+            };
 
-    <!-- Модальное окно: Оставить неактив -->
-    <div id="inactiveModal" class="modal fixed inset-0 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 modal-content">
-            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Оставить неактив</h2>
-            <form id="inactiveForm">
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Дата начала:</label>
-                    <input type="date" name="startDate" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Дата окончания:</label>
-                    <input type="date" name="endDate" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" required>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-semibold mb-2">Причина:</label>
-                    <textarea name="reason" class="shadow-inner appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700" rows="3" required></textarea>
-                </div>
-                <div class="flex justify-end space-x-4">
-                    <button type="button" onclick="closeModal('inactiveModal')" class="bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-500 transition-colors">Отмена</button>
-                    <button type="submit" class="bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-orange-700 transition-colors">Отправить</button>
-                </div>
-            </form>
-        </div>
-    </div>
+            // Определяем, какие роли разрешены для текущей роли
+            const allowedRoles = rolesMap[role] || [];
+            
+            // Обновляем навигационное меню
+            navItems.forEach(item => {
+                const itemRole = item.dataset.role;
+                if (allowedRoles.includes(itemRole)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Обновляем карточки на главной панели
+            cards.forEach(card => {
+                const cardRole = card.dataset.roleCard;
+                if (allowedRoles.includes(cardRole)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Обработчик события для смены роли через выпадающее меню
+        roleSelector.addEventListener('change', (event) => {
+            const selectedRole = event.target.value;
+            updateUIForRole(selectedRole);
+        });
+
+        // Начальная установка UI при загрузке страницы
+        window.onload = () => {
+            updateUIForRole(roleSelector.value);
+        };
+    </script>
     
-    <!-- Кастомное модальное окно для сообщений и подтверждений -->
-    <div id="customMessageModal" class="modal fixed inset-0 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm text-center transform transition-all duration-300 scale-95">
-            <h2 id="customMessageTitle" class="text-2xl font-bold mb-4"></h2>
-            <p id="customMessageText" class="text-gray-700 mb-6"></p>
-            <div id="customMessageButtons" class="flex justify-center space-x-4">
-                <!-- Кнопки будут добавлены динамически -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Скрипты для интерактивности. Файл script.js должен содержать всю логику. -->
-    <script src="script.js"></script>
 </body>
 </html>
