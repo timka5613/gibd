@@ -11,1237 +11,445 @@
         .main-content { width: calc(100% - 250px); min-height: 100vh; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .modal { transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out; opacity: 0; visibility: hidden; }
-        .modal.active { opacity: 1; visibility: visible; }
-        .question-item { border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; }
-        .question-item button { margin-left: 0.5rem; }
+        .modal {
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .question-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .question-item button {
+            margin-left: 0.5rem;
+        }
+        .rank-image {
+            width: 30px; /* Adjust size as needed */
+            height: auto;
+        }
     </style>
 </head>
-<body class="flex bg-gray-100">
+<body id="panel-page" class="flex bg-gray-100">
 
-    <div class="sidebar bg-blue-800 text-white flex flex-col" style="display: none;">
-        <div class="logo-box p-4 border-b border-blue-700"><h1 class="text-xl font-bold">ГИБДД ОРЛС</h1></div>
-        <div class="user-info p-4 flex items-center border-b border-blue-700">
-            <div class="bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center mr-3"><i class="fas fa-user"></i></div>
-            <div>
-                <div class="font-medium" id="userName">Загрузка...</div>
-                <div class="text-xs text-blue-200" id="userRole">Загрузка...</div>
-            </div>
+    <div id="specialCodeModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4 text-center">Подтверждение</h2>
+            <form id="specialCodeForm">
+                <div class="mb-4">
+                    <label for="specialCodeInput" class="block text-gray-700 font-bold mb-2">Введите специальный код:</label>
+                    <input type="password" id="specialCodeInput" name="specialCode" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Подтвердить</button>
+                </div>
+            </form>
         </div>
-        <nav class="flex-1 overflow-y-auto py-2">
-            <ul>
-                <li><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('dashboard')"><i class="fas fa-tachometer-alt mr-3"></i><span class="nav-text">Главная</span></a></li>
-                <li id="manageStaffLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('manage-staff')"><i class="fas fa-users-cog mr-3"></i><span class="nav-text">Управление сотрудниками</span></a></li>
-                <li id="manageCertificationsLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('manage-certifications')"><i class="fas fa-clipboard-list mr-3"></i><span class="nav-text">Управление аттестациями</span></a></li>
-                <li id="manageParadesLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('manage-parades')"><i class="fas fa-bullhorn mr-3"></i><span class="nav-text">Управление строями</span></a></li>
-                <li id="manageCandidatesLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('manage-candidates')"><i class="fas fa-user-tie mr-3"></i><span class="nav-text">Кандидаты в начальники</span></a></li>
-                <li><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('reports')"><i class="fas fa-chart-bar mr-3"></i><span class="nav-text">Отчетность</span></a></li>
-                <li id="orlsReportsLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('orls-reports')"><i class="fas fa-file-alt mr-3"></i><span class="nav-text">Отчетность ОРЛС</span></a></li>
-                <li id="weeklyReportsLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('weekly-reports')"><i class="fas fa-calendar-week mr-3"></i><span class="nav-text">Еженедельные отчеты</span></a></li>
-                <li id="certificationLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('certification')"><i class="fas fa-clipboard-check mr-3"></i><span class="nav-text">Прохождение аттестации</span></a></li>
-                <li id="certificationResultsLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('certification-results')"><i class="fas fa-graduation-cap mr-3"></i><span class="nav-text">Результаты аттестаций</span></a></li>
-                <li id="fullResetLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="openModal('fullResetModal')"><i class="fas fa-sync-alt mr-3"></i><span class="nav-text">Полное обнуление</span></a></li>
-            </ul>
-        </nav>
-        <button onclick="logout()" class="p-4 bg-blue-700 hover:bg-blue-600 transition text-center text-sm">Выйти</button>
     </div>
 
-    <div class="main-content bg-gray-100 p-8" style="display: none;">
+    <div class="sidebar bg-white p-6 shadow-lg flex flex-col justify-between hidden">
+        <div class="flex-grow">
+            <h1 class="text-2xl font-bold mb-6 text-center">ГИБДД</h1>
+            <ul id="sidebar-menu">
+                <li class="mb-2">
+                    <a href="#" onclick="showTab('dashboard')" class="flex items-center text-gray-700 hover:bg-gray-200 p-2 rounded-lg">
+                        <i class="fas fa-home mr-3"></i>Панель управления
+                    </a>
+                </li>
+                <li id="manageStaffLink" class="mb-2">
+                    <a href="#" onclick="showTab('manage-staff')" class="flex items-center text-gray-700 hover:bg-gray-200 p-2 rounded-lg">
+                        <i class="fas fa-users mr-3"></i>Управление составом
+                    </a>
+                </li>
+                <li id="manageCertificationsLink" class="mb-2">
+                    <a href="#" onclick="showTab('manage-certifications')" class="flex items-center text-gray-700 hover:bg-gray-200 p-2 rounded-lg">
+                        <i class="fas fa-certificate mr-3"></i>Управление аттестациями
+                    </a>
+                </li>
+                <li id="manageParadesLink" class="mb-2">
+                    <a href="#" onclick="showTab('manage-parades')" class="flex items-center text-gray-700 hover:bg-gray-200 p-2 rounded-lg">
+                        <i class="fas fa-bullhorn mr-3"></i>Управление строями
+                    </a>
+                </li>
+                <li id="manageCandidatesLink" class="mb-2">
+                    <a href="#" onclick="showTab('manage-candidates')" class="flex items-center text-gray-700 hover:bg-gray-200 p-2 rounded-lg">
+                        <i class="fas fa-user-plus mr-3"></i>Кандидаты на начальника
+                    </a>
+                </li>
+                <li id="certificationResultsLink" class="mb-2">
+                    <a href="#" onclick="showTab('certification-results')" class="flex items-center text-gray-700 hover:bg-gray-200 p-2 rounded-lg">
+                        <i class="fas fa-award mr-3"></i>Результаты аттестаций
+                    </a>
+                </li>
+                <li id="reportsLink" class="mb-2">
+                    <a href="#" onclick="showTab('reports')" class="flex items-center text-gray-700 hover:bg-gray-200 p-2 rounded-lg">
+                        <i class="fas fa-file-alt mr-3"></i>Мои отчеты и неактивы
+                    </a>
+                </li>
+                <li id="orlsReportsLink" class="mb-2">
+                    <a href="#" onclick="showTab('orls-reports')" class="flex items-center text-gray-700 hover:bg-gray-200 p-2 rounded-lg">
+                        <i class="fas fa-folder-open mr-3"></i>Заявления и неактивы
+                    </a>
+                </li>
+                <li id="weeklyReportsLink" class="mb-2">
+                    <a href="#" onclick="showTab('weekly-reports')" class="flex items-center text-gray-700 hover:bg-gray-200 p-2 rounded-lg">
+                        <i class="fas fa-chart-line mr-3"></i>Отчеты за неделю
+                    </a>
+                </li>
+                <li id="certificationLink" class="mb-2">
+                    <a href="#" onclick="showTab('certification')" class="flex items-center text-gray-700 hover:bg-gray-200 p-2 rounded-lg">
+                        <i class="fas fa-clipboard-check mr-3"></i>Пройти аттестацию
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="mt-4 border-t pt-4">
+            <div class="flex items-center">
+                <i class="fas fa-user-circle text-2xl mr-3 text-gray-500"></i>
+                <div>
+                    <p id="userName" class="font-bold">Имя пользователя</p>
+                    <p id="userRole" class="text-sm text-gray-500">Роль</p>
+                </div>
+            </div>
+            <a href="#" onclick="logout()" class="mt-2 block w-full text-center bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition duration-200">Выйти</a>
+        </div>
+    </div>
+
+    <div class="main-content p-8 overflow-y-auto hidden">
+        <h1 class="text-3xl font-bold mb-6">Панель управления</h1>
+
         <div id="dashboard" class="tab-content active">
-            <h2 class="text-2xl font-bold mb-6">Главная</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-lg shadow flex items-center">
-                    <div class="bg-blue-100 p-3 rounded-full mr-4"><i class="fas fa-users text-blue-600"></i></div>
-                    <div><p class="text-gray-500 text-sm">Всего аккаунтов</p><p class="text-2xl font-bold" id="totalAccounts">0</p></div>
+            <h2 class="text-xl font-bold mb-4">Обзор</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-700">Всего аккаунтов</h3>
+                    <p id="totalAccounts" class="text-3xl font-bold text-blue-500 mt-2">0</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow flex items-center">
-                    <div class="bg-green-100 p-3 rounded-full mr-4"><i class="fas fa-clipboard-check text-green-600"></i></div>
-                    <div><p class="text-gray-500 text-sm">Всего тестов</p><p class="text-2xl font-bold" id="totalTests">0</p></div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-700">Всего тестов</h3>
+                    <p id="totalTests" class="text-3xl font-bold text-green-500 mt-2">0</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow flex items-center">
-                    <div class="bg-yellow-100 p-3 rounded-full mr-4"><i class="fas fa-exclamation-triangle text-yellow-600"></i></div>
-                    <div><p class="text-gray-500 text-sm">Всего пройденных аттестаций</p><p class="text-2xl font-bold" id="completedCertifications">0</p></div>
-                </div>
-            </div>
-            
-            <div class="mt-8">
-                <h3 class="text-xl font-bold mb-4">Предстоящие строи</h3>
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <ul id="upcomingParadesList" class="divide-y divide-gray-200"></ul>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-700">Пройдено аттестаций</h3>
+                    <p id="completedCertifications" class="text-3xl font-bold text-purple-500 mt-2">0</p>
                 </div>
             </div>
+            <h2 class="text-xl font-bold mb-4">Предстоящие строи</h2>
+            <ul id="upcomingParadesList" class="bg-white p-6 rounded-lg shadow-md">
+                </ul>
         </div>
 
         <div id="manage-staff" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6">Управление сотрудниками</h2>
-            <button onclick="openModal('addAccountModal')" class="bg-green-500 text-white py-2 px-4 rounded-lg mb-4 hover:bg-green-600 transition">Добавить аккаунт</button>
-
-            <div class="mb-4">
-                <label for="position-filter" class="block text-gray-700 text-sm font-bold mb-2">Фильтр по должности:</label>
-                <select id="position-filter" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                    <option value="all">Все должности</option>
-                </select>
+            <h2 class="text-xl font-bold mb-4">Управление составом</h2>
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="openModal('addAccountModal')" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Добавить аккаунт</button>
+                <div>
+                    <label for="position-filter" class="mr-2">Фильтр по должности:</label>
+                    <select id="position-filter" class="p-2 border rounded"></select>
+                </div>
             </div>
-            
-            <div class="bg-white p-6 rounded-lg shadow">
-                <table class="w-full text-left table-auto">
-                    <thead><tr class="bg-gray-200"><th class="py-2 px-4">ID</th><th class="py-2 px-4">Имя пользователя</th><th class="py-2 px-4">Роль</th><th class="py-2 px-4">Последняя активность</th><th class="py-2 px-4">Действия</th></tr></thead>
-                    <tbody id="accountsTableBody"></tbody>
+            <div class="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Никнейм</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Должность</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Последняя активность</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accountsTableBody" class="bg-white divide-y divide-gray-200">
+                        </tbody>
                 </table>
             </div>
         </div>
-        
+
         <div id="manage-certifications" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6">Управление аттестациями</h2>
-            <div class="flex space-x-4 mb-6">
-                <button onclick="openModal('addTestModal')" class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition">Добавить новый тест</button>
-                <button onclick="openModal('testPasswordModal')" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Пароль для тестов</button>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow">
-                <ul id="testsList" class="divide-y divide-gray-200"></ul>
-            </div>
+            <h2 class="text-xl font-bold mb-4">Управление аттестациями</h2>
+            <button onclick="openModal('addTestModal')" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mb-4">Создать новый тест</button>
+            <ul id="testsList" class="bg-white p-6 rounded-lg shadow-md">
+                </ul>
         </div>
-        
+
         <div id="manage-parades" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6">Управление строями</h2>
-            <button onclick="openModal('addParadeModal')" class="bg-blue-500 text-white py-2 px-4 rounded-lg mb-4 hover:bg-blue-600 transition">Запланировать строй</button>
-            <div class="bg-white p-6 rounded-lg shadow">
-                <h3 class="text-lg font-bold mb-4">Предстоящие строи</h3>
-                <ul id="paradesList" class="divide-y divide-gray-200"></ul>
-            </div>
+            <h2 class="text-xl font-bold mb-4">Управление строями</h2>
+            <button onclick="openModal('addParadeModal')" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 mb-4">Запланировать строй</button>
+            <ul id="paradesList" class="bg-white p-6 rounded-lg shadow-md">
+                </ul>
         </div>
-        
+
         <div id="manage-candidates" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6">Кандидаты в начальники</h2>
-            <div class="bg-white p-6 rounded-lg shadow">
-                <ul id="candidatesList" class="divide-y divide-gray-200"></ul>
-            </div>
+            <h2 class="text-xl font-bold mb-4">Кандидаты на начальника</h2>
+            <ul id="candidatesList" class="bg-white p-6 rounded-lg shadow-md">
+                </ul>
         </div>
-        
+
         <div id="certification-results" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6">Результаты аттестаций</h2>
-            <div class="bg-white p-6 rounded-lg shadow">
-                <table class="w-full text-left table-auto">
-                    <thead><tr class="bg-gray-200"><th class="py-2 px-4">Сотрудник</th><th class="py-2 px-4">Тест</th><th class="py-2 px-4">Дата</th><th class="py-2 px-4">Результат</th><th class="py-2 px-4">Детали</th></tr></thead>
-                    <tbody id="resultsTableBody"></tbody>
+            <h2 class="text-xl font-bold mb-4">Результаты аттестаций</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Сотрудник</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Тест</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Дата прохождения</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Результат</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody" class="bg-white divide-y divide-gray-200">
+                        </tbody>
                 </table>
             </div>
         </div>
 
         <div id="reports" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6">Отчетность</h2>
-            <div class="flex space-x-4 mb-4">
-                <button onclick="openModal('reportModal')" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Подать заявление</button>
-                <button onclick="openModal('inactiveModal')" class="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition">Оставить неактив</button>
+            <h2 class="text-xl font-bold mb-4">Мои отчеты и неактивы</h2>
+            <div class="flex mb-4">
+                <button onclick="openModal('reportModal')" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mr-4">Подать отчет</button>
+                <button onclick="openModal('inactiveModal')" class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600">Оставить неактив</button>
             </div>
-            
-            <div class="bg-white p-6 rounded-lg shadow mt-4">
-                <h3 class="text-lg font-bold mb-4">Мои заявления</h3>
-                <ul id="myReportsList" class="divide-y divide-gray-200"></ul>
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h3 class="text-lg font-semibold mb-2">Мои отчеты</h3>
+                <ul id="myReportsList"></ul>
             </div>
-
-            <div class="bg-white p-6 rounded-lg shadow mt-4">
-                <h3 class="text-lg font-bold mb-4">Мои неактивы</h3>
-                <ul id="myInactivesList" class="divide-y divide-gray-200"></ul>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-2">Мои неактивы</h3>
+                <ul id="myInactivesList"></ul>
             </div>
         </div>
 
         <div id="orls-reports" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6">Отчетность ОРЛС (для руководства)</h2>
-            <div class="bg-white p-6 rounded-lg shadow mt-4">
-                <h3 class="text-lg font-bold mb-4">Заявления сотрудников</h3>
-                <ul id="allReportsList" class="divide-y divide-gray-200"></ul>
+            <h2 class="text-xl font-bold mb-4">Все заявления и неактивы</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h3 class="text-lg font-semibold mb-2">Заявления</h3>
+                <ul id="allReportsList"></ul>
             </div>
-            <div class="bg-white p-6 rounded-lg shadow mt-4">
-                <h3 class="text-lg font-bold mb-4">Неактивы сотрудников</h3>
-                <ul id="allInactivesList" class="divide-y divide-gray-200"></ul>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-2">Неактивы</h3>
+                <ul id="allInactivesList"></ul>
             </div>
         </div>
-        
+
         <div id="weekly-reports" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6">Еженедельные отчеты</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                <div class="bg-white p-6 rounded-lg shadow flex items-center">
-                    <div class="bg-green-100 p-3 rounded-full mr-4"><i class="fas fa-clipboard-check text-green-600"></i></div>
-                    <div><p class="text-gray-500 text-sm">Аттестаций пройдено за неделю</p><p class="text-2xl font-bold" id="weeklyCertifications">0</p></div>
+            <h2 class="text-xl font-bold mb-4">Отчеты за неделю</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-700">Пройдено аттестаций</h3>
+                    <p id="weeklyCertifications" class="text-3xl font-bold text-purple-500 mt-2">0</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow flex items-center">
-                    <div class="bg-blue-100 p-3 rounded-full mr-4"><i class="fas fa-file-alt text-blue-600"></i></div>
-                    <div><p class="text-gray-500 text-sm">Отчетностей за неделю</p><p class="text-2xl font-bold" id="weeklyReports">0</p></div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-700">Заявлений</h3>
+                    <p id="weeklyReports" class="text-3xl font-bold text-blue-500 mt-2">0</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow flex items-center">
-                    <div class="bg-yellow-100 p-3 rounded-full mr-4"><i class="fas fa-exclamation-circle text-yellow-600"></i></div>
-                    <div><p class="text-gray-500 text-sm">Неактивов за неделю</p><p class="text-2xl font-bold" id="weeklyInactives">0</p></div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-700">Неактивов</h3>
+                    <p id="weeklyInactives" class="text-3xl font-bold text-orange-500 mt-2">0</p>
                 </div>
             </div>
-            <div class="bg-white p-6 rounded-lg shadow mt-4">
-                <h3 class="text-lg font-bold mb-4">Сотрудники, подавшие отчеты и неактивы за неделю</h3>
-                <ul id="weeklyActivityList" class="divide-y divide-gray-200"></ul>
-            </div>
+            <h3 class="text-lg font-semibold mb-2">Активность</h3>
+            <ul id="weeklyActivityList" class="bg-white p-6 rounded-lg shadow-md">
+                </ul>
         </div>
 
         <div id="certification" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6">Прохождение аттестации</h2>
-            <div class="bg-white p-6 rounded-lg shadow">
-                <ul id="traineeTestsList" class="divide-y divide-gray-200"></ul>
-            </div>
-        </div>
-    </div>
-    
-    <div id="specialCodeModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold">Введите специальный код</h3>
-            </div>
-            <form id="specialCodeForm">
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Специальный код</label>
-                    <input type="password" id="specialCodeInput" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                </div>
-                <div class="flex justify-end">
-                    <button type="button" onclick="window.location.href='index.html'" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
-                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Подтвердить</button>
-                </div>
-            </form>
+            <h2 class="text-xl font-bold mb-4">Аттестация</h2>
+            <ul id="traineeTestsList" class="bg-white p-6 rounded-lg shadow-md">
+                </ul>
         </div>
     </div>
 
-    <div id="addAccountModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold">Добавить новый аккаунт</h3>
-                <button onclick="closeModal('addAccountModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
+    <div id="addAccountModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Добавить аккаунт</h2>
             <form id="addAccountForm">
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Имя пользователя</label>
-                    <input type="text" name="nickname" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <label class="block text-gray-700">Никнейм:</label>
+                    <input type="text" name="nickname" class="shadow border rounded w-full py-2 px-3" required>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Роль</label>
-                    <select id="newAccountRole" name="role" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        <option value="Сотрудник">Сотрудник</option>
-                        <option value="Начальник">Начальник</option>
-                        <option value="Начальник ОРЛС">Начальник ОРЛС</option>
-                        <option value="ГУ ГИБДД">ГУ ГИБДД</option>
-                    </select>
+                    <label class="block text-gray-700">Роль:</label>
+                    <input type="text" name="role" class="shadow border rounded w-full py-2 px-3" required>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Основной код</label>
-                    <input type="text" name="auth_code" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <label class="block text-gray-700">Код авторизации:</label>
+                    <input type="password" name="auth_code" class="shadow border rounded w-full py-2 px-3" required>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Специальный код</label>
-                    <input type="text" name="special_code" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <label class="block text-gray-700">Специальный код:</label>
+                    <input type="password" name="special_code" class="shadow border rounded w-full py-2 px-3" required>
                 </div>
                 <div class="flex justify-end">
-                    <button type="button" onclick="closeModal('addAccountModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
-                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Сохранить</button>
+                    <button type="button" onclick="closeModal('addAccountModal')" class="bg-gray-500 text-white py-2 px-4 rounded mr-2">Отмена</button>
+                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">Добавить</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="editAccountModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold">Редактировать аккаунт</h3>
-                <button onclick="closeModal('editAccountModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
+    <div id="editAccountModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Редактировать аккаунт</h2>
             <form id="editAccountForm">
                 <input type="hidden" id="editAccountId">
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Имя пользователя</label>
-                    <input type="text" id="editAccountNickname" name="nickname" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <label class="block text-gray-700">Никнейм:</label>
+                    <input type="text" id="editAccountNickname" name="nickname" class="shadow border rounded w-full py-2 px-3" required>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Роль</label>
-                    <select id="editAccountRole" name="role" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        <option value="Сотрудник">Сотрудник</option>
-                        <option value="Начальник">Начальник</option>
-                        <option value="Начальник ОРЛС">Начальник ОРЛС</option>
-                        <option value="ГУ ГИБДД">ГУ ГИБДД</option>
-                    </select>
+                    <label class="block text-gray-700">Роль:</label>
+                    <input type="text" id="editAccountRole" name="role" class="shadow border rounded w-full py-2 px-3" required>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Основной код</label>
-                    <input type="text" id="editAccountCode" name="auth_code" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <label class="block text-gray-700">Код авторизации:</label>
+                    <input type="password" id="editAccountCode" name="auth_code" class="shadow border rounded w-full py-2 px-3" required>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Специальный код</label>
-                    <input type="text" id="editSpecialCode" name="special_code" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <label class="block text-gray-700">Специальный код:</label>
+                    <input type="password" id="editSpecialCode" name="special_code" class="shadow border rounded w-full py-2 px-3" required>
                 </div>
-                <div class="flex justify-end mt-4">
-                    <button type="button" onclick="closeModal('editAccountModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
-                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Сохранить</button>
+                <div class="flex justify-between items-center">
+                    <button type="button" onclick="openModal('assignTestModal')" class="bg-purple-500 text-white py-2 px-4 rounded">Назначить тест</button>
+                    <div>
+                        <button type="button" onclick="closeModal('editAccountModal')" class="bg-gray-500 text-white py-2 px-4 rounded mr-2">Отмена</button>
+                        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">Сохранить</button>
+                    </div>
                 </div>
             </form>
-            <div class="mt-4 pt-4 border-t">
-                <button onclick="openAssignTestModal()" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Выдать аттестацию</button>
-                <button onclick="proposeCandidate()" class="bg-purple-500 text-white py-2 px-4 rounded-lg hover:bg-purple-600 transition">Выдвинуть в начальники</button>
-            </div>
         </div>
     </div>
 
-    <div id="assignTestModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold">Выдать аттестацию сотруднику</h3>
-                <button onclick="closeModal('assignTestModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
+    <div id="assignTestModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Назначить аттестацию</h2>
             <form id="assignTestForm">
                 <input type="hidden" id="assignTestAccountId">
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Выберите аттестацию</label>
-                    <select id="assignTestSelect" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></select>
+                    <label class="block text-gray-700">Выберите тест:</label>
+                    <select id="assignTestSelect" class="shadow border rounded w-full py-2 px-3" required></select>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Время на прохождение (минуты)</label>
-                    <input type="number" id="testTimeInput" min="1" max="120" value="30" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <label class="block text-gray-700">Время на прохождение (минут):</label>
+                    <input type="number" id="testTimeInput" name="testTime" class="shadow border rounded w-full py-2 px-3" value="15" required>
                 </div>
                 <div class="flex justify-end">
-                    <button type="button" onclick="closeModal('assignTestModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
-                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Выдать</button>
+                    <button type="button" onclick="closeModal('assignTestModal')" class="bg-gray-500 text-white py-2 px-4 rounded mr-2">Отмена</button>
+                    <button type="submit" class="bg-purple-500 text-white py-2 px-4 rounded">Назначить</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="addTestModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold">Добавить новый тест</h3>
-                <button onclick="closeModal('addTestModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
+    <div id="addTestModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Создать новый тест</h2>
             <form id="addTestForm">
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Название теста</label>
-                    <input type="text" name="testName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <label class="block text-gray-700">Название теста:</label>
+                    <input type="text" name="testName" class="shadow border rounded w-full py-2 px-3" required>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Описание</label>
-                    <textarea name="description" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"></textarea>
+                    <label class="block text-gray-700">Описание:</label>
+                    <textarea name="description" class="shadow border rounded w-full py-2 px-3" rows="3" required></textarea>
                 </div>
                 <div class="flex justify-end">
-                    <button type="button" onclick="closeModal('addTestModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
-                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Сохранить</button>
+                    <button type="button" onclick="closeModal('addTestModal')" class="bg-gray-500 text-white py-2 px-4 rounded mr-2">Отмена</button>
+                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded">Создать</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="editTestModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-2/3">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold">Редактировать тест: <span id="editTestName"></span></h3>
-                <button onclick="closeModal('editTestModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
+    <div id="editTestModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl max-h-screen overflow-y-auto">
+            <h2 class="text-2xl font-bold mb-4">Редактировать тест: <span id="editTestName"></span></h2>
+            <div id="questionsContainer" class="mb-4">
+                </div>
+            <div class="mb-4">
+                <button type="button" onclick="addQuestion()" class="bg-blue-500 text-white py-2 px-4 rounded">Добавить вопрос</button>
             </div>
-            <div id="questionsContainer" class="max-h-96 overflow-y-auto mb-4 p-4 border rounded"></div>
-            <button onclick="addQuestion()" class="bg-blue-500 text-white py-2 px-4 rounded-lg mb-4 hover:bg-blue-600 transition">Добавить вопрос</button>
             <div class="flex justify-end">
-                <button type="button" onclick="closeModal('editTestModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
-                <button type="button" onclick="saveTestChanges()" class="bg-green-500 text-white py-2 px-4 rounded-lg">Сохранить изменения</button>
+                <button type="button" onclick="closeModal('editTestModal')" class="bg-gray-500 text-white py-2 px-4 rounded mr-2">Отмена</button>
+                <button type="button" onclick="saveEditedTest()" class="bg-green-500 text-white py-2 px-4 rounded">Сохранить</button>
             </div>
         </div>
     </div>
 
-    <div id="testPasswordModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold">Пароль для тестов</h3>
-                <button onclick="closeModal('testPasswordModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
-            <p class="mb-4">Пароль для входа в систему тестирования:</p>
-            <div class="flex items-center">
-                <input type="text" id="testPasswordInput" class="border p-2 rounded-lg w-64 mr-4" value="5sJp@L8x" readonly>
-                <button onclick="generateNewPassword()" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Сгенерировать новый</button>
-            </div>
+    <div id="addParadeModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Запланировать строй</h2>
+            <form id="addParadeForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700">Подразделение:</label>
+                    <input type="text" name="department" class="shadow border rounded w-full py-2 px-3" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">Время строя:</label>
+                    <input type="time" name="paradeTime" class="shadow border rounded w-full py-2 px-3" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">Текст строя:</label>
+                    <textarea name="paradeText" class="shadow border rounded w-full py-2 px-3" rows="3" required></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" onclick="closeModal('addParadeModal')" class="bg-gray-500 text-white py-2 px-4 rounded mr-2">Отмена</button>
+                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded">Запланировать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="reportModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Подать отчет</h2>
+            <form id="reportForm">
+                <input type="hidden" id="reportUserRole">
+                <div class="mb-4">
+                    <label class="block text-gray-700">Тема:</label>
+                    <input type="text" name="reportSubject" class="shadow border rounded w-full py-2 px-3" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">Текст отчета:</label>
+                    <textarea name="reportText" class="shadow border rounded w-full py-2 px-3" rows="5" required></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" onclick="closeModal('reportModal')" class="bg-gray-500 text-white py-2 px-4 rounded mr-2">Отмена</button>
+                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">Отправить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="inactiveModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Оставить неактив</h2>
+            <form id="inactiveForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700">Дата начала:</label>
+                    <input type="date" name="startDate" class="shadow border rounded w-full py-2 px-3" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">Дата окончания:</label>
+                    <input type="date" name="endDate" class="shadow border rounded w-full py-2 px-3" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">Причина:</label>
+                    <textarea name="reason" class="shadow border rounded w-full py-2 px-3" rows="3" required></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" onclick="closeModal('inactiveModal')" class="bg-gray-500 text-white py-2 px-4 rounded mr-2">Отмена</button>
+                    <button type="submit" class="bg-orange-500 text-white py-2 px-4 rounded">Отправить</button>
+                </div>
+            </form>
         </div>
     </div>
     
-    <div id="reportModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold">Подача заявления</h3>
-                <button onclick="closeModal('reportModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
-            <form id="reportForm">
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Ваша должность</label>
-                    <input type="text" id="reportUserRole" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Тема заявления</label>
-                    <input type="text" name="reportSubject" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Текст заявления</label>
-                    <textarea name="reportText" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32" required></textarea>
-                </div>
-                <div class="flex justify-end">
-                    <button type="button" onclick="closeModal('reportModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
-                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Отправить</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="inactiveModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold">Оставить неактив</h3>
-                <button onclick="closeModal('inactiveModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
-            <form id="inactiveForm">
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Дата начала</label>
-                    <input type="date" name="startDate" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Дата окончания</label>
-                    <input type="date" name="endDate" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Причина</label>
-                    <textarea name="reason" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-24" required></textarea>
-                </div>
-                <div class="flex justify-end">
-                    <button type="button" onclick="closeModal('inactiveModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
-                    <button type="submit" class="bg-yellow-500 text-white py-2 px-4 rounded-lg">Отправить</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="addParadeModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold">Запланировать строй</h3>
-                <button onclick="closeModal('addParadeModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
-            <form id="addParadeForm">
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Подразделение</label>
-                    <input type="text" name="department" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Время</label>
-                    <input type="time" name="paradeTime" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Текст уведомления</label>
-                    <textarea name="paradeText" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-24" required></textarea>
-                </div>
-                <div class="flex justify-end">
-                    <button type="button" onclick="closeModal('addParadeModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
-                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg">Запланировать</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="fullResetModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3 text-center">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold text-red-600">Осторожно! Полное обнуление</h3>
-                <button onclick="closeModal('fullResetModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
-            <p class="mb-4">Вы уверены, что хотите полностью **обнулить** все данные? Это действие необратимо и приведет к удалению всех аккаунтов, тестов, отчетов и статистики.</p>
-            <div class="flex justify-center gap-4">
-                <button onclick="closeModal('fullResetModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg">Отмена</button>
-                <button onclick="performFullReset()" class="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition">Подтвердить обнуление</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="detailedResultsModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-2/3 max-w-2xl">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold">Детальный отчет по аттестации</h3>
-                <button onclick="closeModal('detailedResultsModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
-            <div id="resultsContent" class="space-y-4"></div>
-            <div class="mt-4 flex justify-end">
-                <button onclick="closeModal('detailedResultsModal')" class="bg-blue-500 text-white py-2 px-4 rounded-lg">Закрыть</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Глобальные переменные
-        let currentEditingTestId = null;
-        let currentEditingAccountId = null;
-        let currentUser = null;
-        const apiUrl = 'http://localhost:3000/api';
-
-        // --- Утилиты ---
-        async function fetchData(endpoint) {
-            try {
-                const response = await fetch(`${apiUrl}${endpoint}`, {
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                if (!response.ok) {
-                    throw new Error(`Ошибка HTTP: ${response.status}`);
-                }
-                return await response.json();
-            } catch (error) {
-                console.error(`Ошибка при получении данных с ${endpoint}:`, error);
-                return null;
-            }
-        }
-
-        async function sendData(endpoint, method, data) {
-            try {
-                const response = await fetch(`${apiUrl}${endpoint}`, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `Ошибка HTTP: ${response.status}`);
-                }
-                return await response.json();
-            } catch (error) {
-                console.error(`Ошибка при отправке данных на ${endpoint}:`, error);
-                return null;
-            }
-        }
-
-        // --- Модальные окна ---
-        function openModal(id) {
-            document.getElementById(id).classList.add('active');
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
-        }
-
-        // --- Навигация и Отображение Контента ---
-        let currentRole = null;
-
-        async function checkLoginStatus() {
-            try {
-                const response = await fetch(`${apiUrl}/status`);
-                const data = await response.json();
-                if (data.isLoggedIn && data.user) {
-                    currentUser = data.user;
-                    currentRole = currentUser.role;
-                    document.getElementById('userName').textContent = currentUser.nickname;
-                    document.getElementById('userRole').textContent = currentRole;
-                    document.querySelector('.sidebar').style.display = 'flex';
-                    document.querySelector('.main-content').style.display = 'block';
-                    setupPermissions(currentRole);
-                    showTab('dashboard');
-                } else {
-                    window.location.href = 'index.html';
-                }
-            } catch (error) {
-                console.error('Ошибка при проверке статуса авторизации:', error);
-                window.location.href = 'index.html';
-            }
-        }
-
-        function logout() {
-            if (confirm('Вы уверены, что хотите выйти?')) {
-                window.location.href = 'index.html';
-            }
-        }
-
-        function setupPermissions(role) {
-            const adminItems = ['manageStaffLink', 'manageCertificationsLink', 'manageParadesLink', 'manageCandidatesLink', 'orlsReportsLink', 'fullResetLink', 'weeklyReportsLink'];
-
-            // Скрываем все элементы по умолчанию
-            document.querySelectorAll('.sidebar li').forEach(li => li.style.display = 'none');
-            
-            // Отображаем элементы для всех пользователей
-            document.querySelector('.sidebar a[onclick="showTab(\'dashboard\')"]').parentElement.style.display = 'block';
-            document.querySelector('.sidebar a[onclick="showTab(\'reports\')"]').parentElement.style.display = 'block';
-            document.querySelector('.sidebar a[onclick="logout()"]').parentElement.style.display = 'block';
-            document.getElementById('certificationLink').style.display = 'block';
-            document.getElementById('certificationResultsLink').style.display = 'block';
-
-            // Отображаем административные элементы для определенных ролей
-            if (role === 'Начальник ОРЛС' || role === 'ГУ ГИБДД') {
-                adminItems.forEach(id => {
-                    const element = document.getElementById(id);
-                    if (element) element.style.display = 'block';
-                });
-            }
-        }
-
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-
-            // Загрузка данных для активной вкладки
-            switch (tabId) {
-                case 'dashboard':
-                    loadDashboard();
-                    break;
-                case 'manage-staff':
-                    loadAccounts();
-                    break;
-                case 'manage-certifications':
-                    loadTests();
-                    break;
-                case 'manage-parades':
-                    loadParades();
-                    break;
-                case 'manage-candidates':
-                    loadCandidates();
-                    break;
-                case 'certification-results':
-                    loadCertificationResults();
-                    break;
-                case 'reports':
-                    loadMyReports();
-                    break;
-                case 'orls-reports':
-                    loadAllReports();
-                    break;
-                case 'weekly-reports':
-                    loadWeeklyReports();
-                    break;
-                case 'certification':
-                    loadTraineeTests();
-                    break;
-            }
-        }
-
-        // --- Загрузка данных с сервера ---
-        async function loadDashboard() {
-            const data = await fetchData('/dashboard');
-            if (data) {
-                document.getElementById('totalAccounts').textContent = data.totalAccounts || 0;
-                document.getElementById('totalTests').textContent = data.totalTests || 0;
-                document.getElementById('completedCertifications').textContent = data.completedCertifications || 0;
-                renderUpcomingParades(data.upcomingParades);
-            }
-        }
-
-        async function loadAccounts() {
-            const data = await fetchData('/accounts');
-            if (data) {
-                renderAccounts(data.accounts);
-            }
-        }
-
-        async function loadTests() {
-            const data = await fetchData('/tests');
-            if (data) {
-                renderTests(data.tests);
-            }
-        }
-        
-        async function loadParades() {
-            const data = await fetchData('/parades');
-            if (data) {
-                renderParades(data.parades);
-            }
-        }
-
-        async function loadCandidates() {
-            const data = await fetchData('/candidates');
-            if (data) {
-                renderCandidates(data.candidates);
-            }
-        }
-        
-        async function loadCertificationResults() {
-            const data = await fetchData('/certification-results');
-            if (data) {
-                renderCertificationResults(data.results);
-            }
-        }
-        
-        async function loadMyReports() {
-            const data = await fetchData(`/reports/user/${currentUser.id}`);
-            if (data) {
-                renderMyReports(data.reports);
-            }
-        }
-
-        async function loadAllReports() {
-            const data = await fetchData('/reports/all');
-            if (data) {
-                renderAllReports(data.reports);
-            }
-        }
-        
-        async function loadTraineeTests() {
-            const data = await fetchData(`/trainee-tests/${currentUser.id}`);
-            if (data) {
-                renderTraineeTests(data.tests);
-            }
-        }
-
-        async function loadWeeklyReports() {
-            const data = await fetchData('/reports/weekly');
-            if (data) {
-                document.getElementById('weeklyCertifications').textContent = data.weeklyCertifications || 0;
-                document.getElementById('weeklyReports').textContent = data.weeklyReports || 0;
-                document.getElementById('weeklyInactives').textContent = data.weeklyInactives || 0;
-                renderWeeklyActivityList(data.weeklyActivity);
-            }
-        }
-
-        // --- Рендеринг контента ---
-        function renderUpcomingParades(parades) {
-            const list = document.getElementById('upcomingParadesList');
-            list.innerHTML = '';
-            if (parades.length === 0) {
-                list.innerHTML = '<p class="text-gray-500">Предстоящих строев нет.</p>';
-                return;
-            }
-            parades.forEach(parade => {
-                const li = document.createElement('li');
-                li.className = 'py-3';
-                li.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm font-medium text-gray-900">${parade.department}</p>
-                            <p class="text-sm text-gray-500">Время: ${parade.paradeTime}</p>
-                            <p class="text-sm text-gray-500">Текст: ${parade.paradeText}</p>
-                        </div>
-                    </div>`;
-                list.appendChild(li);
-            });
-        }
-
-        function renderAccounts(accounts) {
-            const tableBody = document.getElementById('accountsTableBody');
-            tableBody.innerHTML = '';
-            const positionFilter = document.getElementById('position-filter');
-            const roles = [...new Set(accounts.map(acc => acc.role))];
-            positionFilter.innerHTML = '<option value="all">Все должности</option>';
-            roles.forEach(role => {
-                const option = document.createElement('option');
-                option.value = role;
-                option.textContent = role;
-                positionFilter.appendChild(option);
-            });
-            accounts.forEach(account => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="py-2 px-4 border-b">${account.id}</td>
-                    <td class="py-2 px-4 border-b">${account.nickname}</td>
-                    <td class="py-2 px-4 border-b">${account.role}</td>
-                    <td class="py-2 px-4 border-b">${new Date(account.last_active).toLocaleString()}</td>
-                    <td class="py-2 px-4 border-b">
-                        <button onclick="editAccount(${account.id})" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Редактировать</button>
-                    </td>`;
-                tableBody.appendChild(tr);
-            });
-        }
-
-        function renderTests(tests) {
-            const list = document.getElementById('testsList');
-            list.innerHTML = '';
-            if (tests.length === 0) {
-                list.innerHTML = '<p class="text-gray-500">Тестов пока нет.</p>';
-                return;
-            }
-            tests.forEach(test => {
-                const li = document.createElement('li');
-                li.className = 'py-4 flex justify-between items-center';
-                li.innerHTML = `
-                    <div>
-                        <p class="text-lg font-bold">${test.name}</p>
-                        <p class="text-sm text-gray-600">${test.description}</p>
-                    </div>
-                    <div>
-                        <button onclick="editTest(${test.id})" class="bg-blue-500 text-white px-3 py-1 rounded text-sm mr-2">Редактировать</button>
-                        <button onclick="deleteTest(${test.id})" class="bg-red-500 text-white px-3 py-1 rounded text-sm">Удалить</button>
-                    </div>`;
-                list.appendChild(li);
-            });
-        }
-
-        function renderParades(parades) {
-            const list = document.getElementById('paradesList');
-            list.innerHTML = '';
-            if (parades.length === 0) {
-                list.innerHTML = '<p class="text-gray-500">Запланированных строев нет.</p>';
-                return;
-            }
-            parades.forEach(parade => {
-                const li = document.createElement('li');
-                li.className = 'py-4 flex justify-between items-center';
-                li.innerHTML = `
-                    <div>
-                        <p class="text-lg font-bold">Подразделение: ${parade.department}</p>
-                        <p class="text-sm text-gray-600">Время: ${parade.paradeTime}</p>
-                        <p class="text-sm text-gray-600">Текст: ${parade.paradeText}</p>
-                    </div>
-                    <div>
-                        <button onclick="deleteParade(${parade.id})" class="bg-red-500 text-white px-3 py-1 rounded text-sm">Удалить</button>
-                    </div>`;
-                list.appendChild(li);
-            });
-        }
-
-        function renderCandidates(candidates) {
-            const list = document.getElementById('candidatesList');
-            list.innerHTML = '';
-            if (candidates.length === 0) {
-                list.innerHTML = '<p class="text-gray-500">Нет кандидатов в начальники.</p>';
-                return;
-            }
-            candidates.forEach(candidate => {
-                const li = document.createElement('li');
-                li.className = 'py-4 flex justify-between items-center';
-                li.innerHTML = `
-                    <div>
-                        <p class="text-lg font-bold">${candidate.nickname}</p>
-                        <p class="text-sm text-gray-600">ID: ${candidate.id}</p>
-                    </div>
-                    <div>
-                        <button onclick="approveCandidate(${candidate.id})" class="bg-green-500 text-white px-3 py-1 rounded text-sm mr-2">Одобрить</button>
-                        <button onclick="rejectCandidate(${candidate.id})" class="bg-red-500 text-white px-3 py-1 rounded text-sm">Отклонить</button>
-                    </div>`;
-                list.appendChild(li);
-            });
-        }
-
-        function renderCertificationResults(results) {
-            const tableBody = document.getElementById('resultsTableBody');
-            tableBody.innerHTML = '';
-            if (results.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-gray-500">Нет результатов аттестаций.</td></tr>`;
-                return;
-            }
-            results.forEach(result => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="py-2 px-4 border-b">${result.nickname}</td>
-                    <td class="py-2 px-4 border-b">${result.testName}</td>
-                    <td class="py-2 px-4 border-b">${new Date(result.date).toLocaleString()}</td>
-                    <td class="py-2 px-4 border-b">${result.result}</td>
-                    <td class="py-2 px-4 border-b">
-                        <button onclick="showDetailedResults(${result.id})" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Показать</button>
-                    </td>`;
-                tableBody.appendChild(tr);
-            });
-        }
-
-        function renderMyReports(reports) {
-            const reportsList = document.getElementById('myReportsList');
-            reportsList.innerHTML = '';
-            const userReports = reports.filter(r => r.type === 'report');
-            if (userReports.length === 0) {
-                 reportsList.innerHTML = '<p class="text-gray-500">Вы пока не подавали заявлений.</p>';
-            } else {
-                 userReports.forEach(report => {
-                    const li = document.createElement('li');
-                    li.className = 'py-4';
-                    li.innerHTML = `<p class="text-lg font-bold">${report.subject}</p><p class="text-sm text-gray-600">${report.text}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(report.date).toLocaleString()}</p>`;
-                    reportsList.appendChild(li);
-                });
-            }
-
-            const inactivesList = document.getElementById('myInactivesList');
-            inactivesList.innerHTML = '';
-            const userInactives = reports.filter(r => r.type === 'inactive');
-            if (userInactives.length === 0) {
-                inactivesList.innerHTML = '<p class="text-gray-500">Вы пока не оставляли неактивов.</p>';
-            } else {
-                 userInactives.forEach(inactive => {
-                    const li = document.createElement('li');
-                    li.className = 'py-4';
-                    li.innerHTML = `<p class="text-lg font-bold">Неактив: ${inactive.startDate} по ${inactive.endDate}</p><p class="text-sm text-gray-600">Причина: ${inactive.reason}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(inactive.date).toLocaleString()}</p>`;
-                    inactivesList.appendChild(li);
-                });
-            }
-        }
-
-        function renderAllReports(reports) {
-            const reportsList = document.getElementById('allReportsList');
-            reportsList.innerHTML = '';
-            const allReports = reports.filter(r => r.type === 'report');
-            if (allReports.length === 0) {
-                 reportsList.innerHTML = '<p class="text-gray-500">Заявлений пока нет.</p>';
-            } else {
-                allReports.forEach(report => {
-                    const li = document.createElement('li');
-                    li.className = 'py-4';
-                    li.innerHTML = `<p class="text-lg font-bold">${report.subject} от ${report.nickname}</p><p class="text-sm text-gray-600">${report.text}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(report.date).toLocaleString()}</p>`;
-                    reportsList.appendChild(li);
-                });
-            }
-
-            const inactivesList = document.getElementById('allInactivesList');
-            inactivesList.innerHTML = '';
-            const allInactives = reports.filter(r => r.type === 'inactive');
-            if (allInactives.length === 0) {
-                inactivesList.innerHTML = '<p class="text-gray-500">Неактивов пока нет.</p>';
-            } else {
-                allInactives.forEach(inactive => {
-                    const li = document.createElement('li');
-                    li.className = 'py-4';
-                    li.innerHTML = `<p class="text-lg font-bold">Неактив: ${inactive.startDate} по ${inactive.endDate} от ${inactive.nickname}</p><p class="text-sm text-gray-600">Причина: ${inactive.reason}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(inactive.date).toLocaleString()}</p>`;
-                    inactivesList.appendChild(li);
-                });
-            }
-        }
-
-        function renderWeeklyActivityList(activities) {
-            const list = document.getElementById('weeklyActivityList');
-            list.innerHTML = '';
-            if (activities.length === 0) {
-                list.innerHTML = '<p class="text-gray-500">За последнюю неделю не было отчетов или неактивов.</p>';
-                return;
-            }
-            activities.forEach(activity => {
-                const li = document.createElement('li');
-                li.className = 'py-4';
-                let activityDetails = '';
-                if (activity.type === 'report') {
-                    activityDetails = `подал(-а) отчет "<strong>${activity.subject}</strong>"`;
-                } else if (activity.type === 'inactive') {
-                    activityDetails = `оставил(-а) неактив`;
-                }
-                li.innerHTML = `<p class="text-lg font-bold">${activity.nickname}</p><p class="text-sm text-gray-600">${activityDetails} от ${new Date(activity.date).toLocaleDateString()}</p>`;
-                list.appendChild(li);
-            });
-        }
-
-        function renderTraineeTests(tests) {
-            const list = document.getElementById('traineeTestsList');
-            list.innerHTML = '';
-            if (tests.length === 0) {
-                list.innerHTML = '<p class="text-gray-500">Вам не назначено ни одной аттестации.</p>';
-                return;
-            }
-            tests.forEach(test => {
-                const li = document.createElement('li');
-                li.className = 'py-4 flex justify-between items-center';
-                li.innerHTML = `
-                    <div>
-                        <p class="text-lg font-bold">${test.testName}</p>
-                        <p class="text-sm text-gray-600">Время на прохождение: ${test.timeLimit} минут</p>
-                    </div>
-                    <div>
-                        <button onclick="startTest(${test.id})" class="bg-green-500 text-white px-3 py-1 rounded text-sm">Начать</button>
-                    </div>`;
-                list.appendChild(li);
-            });
-        }
-
-        // --- Обработчики форм и действий ---
-        async function addAccount(event) {
-            event.preventDefault();
-            const form = event.target;
-            const data = {
-                nickname: form.nickname.value,
-                role: form.role.value,
-                auth_code: form.auth_code.value,
-                special_code: form.special_code.value
-            };
-            const result = await sendData('/accounts', 'POST', data);
-            if (result) {
-                closeModal('addAccountModal');
-                loadAccounts();
-                alert('Аккаунт успешно добавлен!');
-            }
-        }
-
-        async function editAccount(id) {
-            currentEditingAccountId = id;
-            const account = await fetchData(`/accounts/${id}`);
-            if (account) {
-                document.getElementById('editAccountId').value = account.id;
-                document.getElementById('editAccountNickname').value = account.nickname;
-                document.getElementById('editAccountRole').value = account.role;
-                document.getElementById('editAccountCode').value = account.auth_code;
-                document.getElementById('editSpecialCode').value = account.special_code;
-                openModal('editAccountModal');
-            }
-        }
-
-        async function saveAccountChanges(event) {
-            event.preventDefault();
-            const form = event.target;
-            const data = {
-                nickname: form.nickname.value,
-                role: form.role.value,
-                auth_code: form.auth_code.value,
-                special_code: form.special_code.value
-            };
-            const result = await sendData(`/accounts/${currentEditingAccountId}`, 'PUT', data);
-            if (result) {
-                closeModal('editAccountModal');
-                loadAccounts();
-                alert('Изменения сохранены!');
-            }
-        }
-
-        async function proposeCandidate() {
-            if (confirm('Выдвинуть этого сотрудника в кандидаты на начальника?')) {
-                const result = await sendData(`/candidates`, 'POST', { accountId: currentEditingAccountId });
-                if (result) {
-                    closeModal('editAccountModal');
-                    alert('Сотрудник успешно выдвинут в кандидаты.');
-                }
-            }
-        }
-
-        async function approveCandidate(accountId) {
-            if (confirm('Вы уверены, что хотите одобрить этого кандидата?')) {
-                const result = await sendData(`/candidates/${accountId}/approve`, 'POST', {});
-                if (result) {
-                    loadCandidates();
-                    alert('Кандидат успешно одобрен и повышен.');
-                }
-            }
-        }
-
-        async function rejectCandidate(accountId) {
-            if (confirm('Вы уверены, что хотите отклонить этого кандидата?')) {
-                const result = await sendData(`/candidates/${accountId}/reject`, 'POST', {});
-                if (result) {
-                    loadCandidates();
-                    alert('Кандидат отклонен.');
-                }
-            }
-        }
-
-        async function addTest(event) {
-            event.preventDefault();
-            const form = event.target;
-            const data = {
-                name: form.testName.value,
-                description: form.description.value,
-                questions: []
-            };
-            const result = await sendData('/tests', 'POST', data);
-            if (result) {
-                closeModal('addTestModal');
-                loadTests();
-                alert('Новый тест успешно добавлен!');
-            }
-        }
-
-        async function editTest(testId) {
-            currentEditingTestId = testId;
-            const test = await fetchData(`/tests/${testId}`);
-            if (test) {
-                document.getElementById('editTestName').textContent = test.name;
-                const container = document.getElementById('questionsContainer');
-                container.innerHTML = '';
-                test.questions.forEach((q, index) => {
-                    const div = document.createElement('div');
-                    div.className = 'question-item';
-                    div.dataset.id = q.id;
-                    div.innerHTML = `
-                        <div class="mb-2">
-                            <label class="block text-gray-700">Вопрос:</label>
-                            <input type="text" data-field="text" value="${q.text}" class="shadow border rounded w-full py-2 px-3">
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-gray-700">Варианты ответов (через запятую):</label>
-                            <input type="text" data-field="options" value="${q.options.join(', ')}" class="shadow border rounded w-full py-2 px-3">
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-gray-700">Правильный ответ:</label>
-                            <input type="text" data-field="answer" value="${q.answer}" class="shadow border rounded w-full py-2 px-3">
-                        </div>
-                        <button type="button" onclick="deleteQuestion(${q.id})" class="bg-red-500 text-white py-1 px-2 rounded text-sm">Удалить вопрос</button>
-                    `;
-                    container.appendChild(div);
-                });
-                openModal('editTestModal');
-            }
-        }
-
-        function addQuestion() {
-            const container = document.getElementById('questionsContainer');
-            const newId = Date.now();
-            const div = document.createElement('div');
-            div.className = 'question-item';
-            div.dataset.id = newId;
-            div.innerHTML = `
-                <div class="mb-2">
-                    <label class="block text-gray-700">Вопрос:</label>
-                    <input type="text" data-field="text" value="" class="shadow border rounded w-full py-2 px-3">
-                </div>
-                <div class="mb-2">
-                    <label class="block text-gray-700">Варианты ответов (через запятую):</label>
-                    <input type="text" data-field="options" value="" class="shadow border rounded w-full py-2 px-3">
-                </div>
-                <div class="mb-2">
-                    <label class="block text-gray-700">Правильный ответ:</label>
-                    <input type="text" data-field="answer" value="" class="shadow border rounded w-full py-2 px-3">
-                </div>
-                <button type="button" onclick="deleteQuestion(${newId})" class="bg-red-500 text-white py-1 px-2 rounded text-sm">Удалить вопрос</button>
-            `;
-            container.appendChild(div);
-        }
-
-        async function saveTestChanges() {
-            const questions = [];
-            document.querySelectorAll('#questionsContainer .question-item').forEach(item => {
-                questions.push({
-                    id: parseInt(item.dataset.id),
-                    text: item.querySelector('[data-field="text"]').value,
-                    options: item.querySelector('[data-field="options"]').value.split(',').map(o => o.trim()),
-                    answer: item.querySelector('[data-field="answer"]').value
-                });
-            });
-            const result = await sendData(`/tests/${currentEditingTestId}`, 'PUT', { questions });
-            if (result) {
-                closeModal('editTestModal');
-                loadTests();
-                alert('Изменения в тесте сохранены.');
-            }
-        }
-
-        async function deleteQuestion(questionId) {
-            if (confirm('Вы уверены, что хотите удалить этот вопрос?')) {
-                const result = await sendData(`/tests/${currentEditingTestId}/questions/${questionId}`, 'DELETE', {});
-                if (result) {
-                    editTest(currentEditingTestId);
-                    alert('Вопрос успешно удален!');
-                }
-            }
-        }
-
-        async function deleteTest(testId) {
-            if (confirm('Вы уверены, что хотите удалить этот тест?')) {
-                const result = await sendData(`/tests/${testId}`, 'DELETE', {});
-                if (result) {
-                    loadTests();
-                    alert('Тест успешно удален.');
-                }
-            }
-        }
-
-        async function assignTest(event) {
-            event.preventDefault();
-            const form = event.target;
-            const data = {
-                accountId: document.getElementById('assignTestAccountId').value,
-                testId: form.assignTestSelect.value,
-                timeLimit: form.testTimeInput.value
-            };
-            const result = await sendData('/assign-test', 'POST', data);
-            if (result) {
-                closeModal('assignTestModal');
-                alert('Аттестация успешно назначена!');
-            }
-        }
-
-        async function showDetailedResults(resultId) {
-            const result = await fetchData(`/certification-results/${resultId}`);
-            if (result) {
-                const content = document.getElementById('resultsContent');
-                content.innerHTML = `
-                    <p><strong>Сотрудник:</strong> ${result.nickname}</p>
-                    <p><strong>Тест:</strong> ${result.testName}</p>
-                    <p><strong>Дата:</strong> ${new Date(result.date).toLocaleString()}</p>
-                    <p><strong>Результат:</strong> ${result.score}</p>
-                    <h4>Ответы:</h4>
-                    <ul class="list-disc ml-6">
-                        ${result.answers.map(a => `
-                            <li class="${a.isCorrect ? 'text-green-600' : 'text-red-600'}">
-                                <strong>Вопрос:</strong> ${a.question} <br>
-                                <strong>Ваш ответ:</strong> ${a.userAnswer} <br>
-                                <strong>Правильный ответ:</strong> ${a.correctAnswer}
-                            </li>
-                        `).join('')}
-                    </ul>
-                `;
-                openModal('detailedResultsModal');
-            }
-        }
-
-        async function addParade(event) {
-            event.preventDefault();
-            const form = event.target;
-            const data = {
-                department: form.department.value,
-                paradeTime: form.paradeTime.value,
-                paradeText: form.paradeText.value
-            };
-            const result = await sendData('/parades', 'POST', data);
-            if (result) {
-                closeModal('addParadeModal');
-                loadParades();
-                alert('Строй успешно запланирован!');
-            }
-        }
-        
-        async function deleteParade(paradeId) {
-            if (confirm('Вы уверены, что хотите удалить этот строй?')) {
-                const result = await sendData(`/parades/${paradeId}`, 'DELETE', {});
-                if (result) {
-                    loadParades();
-                    alert('Строй успешно удален!');
-                }
-            }
-        }
-
-        async function submitReport(event) {
-            event.preventDefault();
-            const form = event.target;
-            const data = {
-                type: 'report',
-                userId: currentUser.id,
-                nickname: currentUser.nickname,
-                subject: form.reportSubject.value,
-                text: form.reportText.value
-            };
-            const result = await sendData('/reports', 'POST', data);
-            if (result) {
-                closeModal('reportModal');
-                loadMyReports();
-                alert('Заявление успешно отправлено!');
-            }
-        }
-
-        async function submitInactive(event) {
-            event.preventDefault();
-            const form = event.target;
-            const data = {
-                type: 'inactive',
-                userId: currentUser.id,
-                nickname: currentUser.nickname,
-                startDate: form.startDate.value,
-                endDate: form.endDate.value,
-                reason: form.reason.value
-            };
-            const result = await sendData('/reports', 'POST', data);
-            if (result) {
-                closeModal('inactiveModal');
-                loadMyReports();
-                alert('Неактив успешно отправлен!');
-            }
-        }
-
-        async function performFullReset() {
-            if (confirm('Это действие необратимо! Вы действительно хотите полностью обнулить все данные?')) {
-                const result = await sendData('/full-reset', 'POST', {});
-                if (result) {
-                    alert('Все данные успешно обнулены.');
-                    window.location.reload();
-                }
-            }
-        }
-
-        // --- Инициализация ---
-        window.onload = function() {
-            checkLoginStatus();
-        };
-
-        // Привязка обработчиков форм
-        document.getElementById('addAccountForm').onsubmit = addAccount;
-        document.getElementById('editAccountForm').onsubmit = saveAccountChanges;
-        document.getElementById('assignTestForm').onsubmit = assignTest;
-        document.getElementById('addTestForm').onsubmit = addTest;
-        document.getElementById('addParadeForm').onsubmit = addParade;
-        document.getElementById('reportForm').onsubmit = submitReport;
-        document.getElementById('inactiveForm').onsubmit = submitInactive;
-
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
