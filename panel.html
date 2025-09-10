@@ -37,6 +37,7 @@
                 <li id="manageCandidatesLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('manage-candidates')"><i class="fas fa-user-tie mr-3"></i><span class="nav-text">Кандидаты в начальники</span></a></li>
                 <li><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('reports')"><i class="fas fa-chart-bar mr-3"></i><span class="nav-text">Отчетность</span></a></li>
                 <li id="orlsReportsLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('orls-reports')"><i class="fas fa-file-alt mr-3"></i><span class="nav-text">Отчетность ОРЛС</span></a></li>
+                <li id="weeklyReportsLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('weekly-reports')"><i class="fas fa-calendar-week mr-3"></i><span class="nav-text">Еженедельные отчеты</span></a></li>
                 <li id="certificationLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('certification')"><i class="fas fa-clipboard-check mr-3"></i><span class="nav-text">Прохождение аттестации</span></a></li>
                 <li id="certificationResultsLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('certification-results')"><i class="fas fa-graduation-cap mr-3"></i><span class="nav-text">Результаты аттестаций</span></a></li>
                 <li id="fullResetLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="openModal('fullResetModal')"><i class="fas fa-sync-alt mr-3"></i><span class="nav-text">Полное обнуление</span></a></li>
@@ -157,6 +158,28 @@
             </div>
         </div>
         
+        <div id="weekly-reports" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6">Еженедельные отчеты</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white p-6 rounded-lg shadow flex items-center">
+                    <div class="bg-green-100 p-3 rounded-full mr-4"><i class="fas fa-clipboard-check text-green-600"></i></div>
+                    <div><p class="text-gray-500 text-sm">Аттестаций пройдено за неделю</p><p class="text-2xl font-bold" id="weeklyCertifications">0</p></div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow flex items-center">
+                    <div class="bg-blue-100 p-3 rounded-full mr-4"><i class="fas fa-file-alt text-blue-600"></i></div>
+                    <div><p class="text-gray-500 text-sm">Отчетностей за неделю</p><p class="text-2xl font-bold" id="weeklyReports">0</p></div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow flex items-center">
+                    <div class="bg-yellow-100 p-3 rounded-full mr-4"><i class="fas fa-exclamation-circle text-yellow-600"></i></div>
+                    <div><p class="text-gray-500 text-sm">Неактивов за неделю</p><p class="text-2xl font-bold" id="weeklyInactives">0</p></div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow mt-4">
+                <h3 class="text-lg font-bold mb-4">Сотрудники, подавшие отчеты и неактивы за неделю</h3>
+                <ul id="weeklyActivityList" class="divide-y divide-gray-200"></ul>
+            </div>
+        </div>
+
         <div id="certification" class="tab-content">
             <h2 class="text-2xl font-bold mb-6">Прохождение аттестации</h2>
             <div class="bg-white p-6 rounded-lg shadow">
@@ -196,7 +219,12 @@
                 </div>
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Роль</label>
-                    <select id="newAccountRole" name="role" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></select>
+                    <select id="newAccountRole" name="role" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="Сотрудник">Сотрудник</option>
+                        <option value="Начальник">Начальник</option>
+                        <option value="Начальник ОРЛС">Начальник ОРЛС</option>
+                        <option value="ГУ ГИБДД">ГУ ГИБДД</option>
+                    </select>
                 </div>
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Основной код</label>
@@ -228,7 +256,12 @@
                 </div>
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Роль</label>
-                    <select id="editAccountRole" name="role" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></select>
+                    <select id="editAccountRole" name="role" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="Сотрудник">Сотрудник</option>
+                        <option value="Начальник">Начальник</option>
+                        <option value="Начальник ОРЛС">Начальник ОРЛС</option>
+                        <option value="ГУ ГИБДД">ГУ ГИБДД</option>
+                    </select>
                 </div>
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Основной код</label>
@@ -438,6 +471,7 @@
         // Глобальные переменные
         let currentEditingTestId = null;
         let currentEditingAccountId = null;
+        let currentUser = null;
         const apiUrl = 'http://localhost:3000/api'; // Обновите, если ваш сервер работает на другом порту
 
         // --- Утилиты ---
@@ -452,7 +486,7 @@
                 return await response.json();
             } catch (error) {
                 console.error(`Ошибка при получении данных с ${endpoint}:`, error);
-                alert(`Не удалось получить данные. Проверьте, запущен ли сервер.`);
+                // alert(`Не удалось получить данные. Проверьте, запущен ли сервер.`);
                 return null;
             }
         }
@@ -471,7 +505,7 @@
                 return await response.json();
             } catch (error) {
                 console.error(`Ошибка при отправке данных на ${endpoint}:`, error);
-                alert(`Не удалось выполнить действие: ${error.message}`);
+                // alert(`Не удалось выполнить действие: ${error.message}`);
                 return null;
             }
         }
@@ -487,7 +521,6 @@
 
         // --- Навигация и Отображение Контента ---
         let currentRole = null;
-        let currentUser = null;
 
         async function checkLoginStatus() {
             try {
@@ -518,9 +551,8 @@
         }
 
         function setupPermissions(role) {
-            const adminItems = ['manageStaffLink', 'manageCertificationsLink', 'manageParadesLink', 'manageCandidatesLink', 'orlsReportsLink', 'fullResetLink'];
+            const adminItems = ['manageStaffLink', 'manageCertificationsLink', 'manageParadesLink', 'manageCandidatesLink', 'orlsReportsLink', 'fullResetLink', 'weeklyReportsLink'];
             const userItems = ['certificationLink', 'certificationResultsLink', 'reports'];
-            const orlsOrSeniorItems = ['orlsReportsLink', 'fullResetLink'];
 
             document.querySelectorAll('.sidebar li').forEach(li => li.style.display = 'none');
             document.querySelector('.sidebar a[onclick="showTab(\'dashboard\')"]').parentElement.style.display = 'block';
@@ -529,15 +561,7 @@
             document.getElementById('certificationLink').style.display = 'block';
             document.getElementById('certificationResultsLink').style.display = 'block';
 
-            if (role === 'Начальник ОРЛС') {
-                adminItems.forEach(id => {
-                    const element = document.getElementById(id);
-                    if (element) element.style.display = 'block';
-                });
-                document.getElementById('orlsReportsLink').style.display = 'block';
-                document.getElementById('fullResetLink').style.display = 'block';
-            }
-            if (role === 'ГУ ГИБДД') {
+            if (role === 'Начальник ОРЛС' || role === 'ГУ ГИБДД') {
                 adminItems.forEach(id => {
                     const element = document.getElementById(id);
                     if (element) element.style.display = 'block';
@@ -574,6 +598,9 @@
                     break;
                 case 'orls-reports':
                     loadAllReports();
+                    break;
+                case 'weekly-reports':
+                    loadWeeklyReports();
                     break;
                 case 'certification':
                     loadTraineeTests();
@@ -628,14 +655,14 @@
         }
         
         async function loadMyReports() {
-            const data = await fetchData(`/reports/${currentUser.id}`);
+            const data = await fetchData(`/reports/user/${currentUser.id}`);
             if (data) {
                 renderMyReports(data.reports);
             }
         }
 
         async function loadAllReports() {
-            const data = await fetchData('/reports');
+            const data = await fetchData('/reports/all');
             if (data) {
                 renderAllReports(data.reports);
             }
@@ -648,10 +675,24 @@
             }
         }
 
+        async function loadWeeklyReports() {
+            const data = await fetchData('/reports/weekly');
+            if (data) {
+                document.getElementById('weeklyCertifications').textContent = data.weeklyCertifications || 0;
+                document.getElementById('weeklyReports').textContent = data.weeklyReports || 0;
+                document.getElementById('weeklyInactives').textContent = data.weeklyInactives || 0;
+                renderWeeklyActivityList(data.weeklyActivity);
+            }
+        }
+
         // --- Рендеринг контента ---
         function renderUpcomingParades(parades) {
             const list = document.getElementById('upcomingParadesList');
             list.innerHTML = '';
+            if (parades.length === 0) {
+                list.innerHTML = '<p class="text-gray-500">Предстоящих строев нет.</p>';
+                return;
+            }
             parades.forEach(parade => {
                 const li = document.createElement('li');
                 li.className = 'py-3';
@@ -696,6 +737,10 @@
         function renderTests(tests) {
             const list = document.getElementById('testsList');
             list.innerHTML = '';
+            if (tests.length === 0) {
+                list.innerHTML = '<p class="text-gray-500">Тестов пока нет.</p>';
+                return;
+            }
             tests.forEach(test => {
                 const li = document.createElement('li');
                 li.className = 'py-4 flex justify-between items-center';
@@ -715,6 +760,10 @@
         function renderParades(parades) {
             const list = document.getElementById('paradesList');
             list.innerHTML = '';
+            if (parades.length === 0) {
+                list.innerHTML = '<p class="text-gray-500">Запланированных строев нет.</p>';
+                return;
+            }
             parades.forEach(parade => {
                 const li = document.createElement('li');
                 li.className = 'py-4 flex justify-between items-center';
@@ -734,6 +783,10 @@
         function renderCandidates(candidates) {
             const list = document.getElementById('candidatesList');
             list.innerHTML = '';
+            if (candidates.length === 0) {
+                list.innerHTML = '<p class="text-gray-500">Нет кандидатов в начальники.</p>';
+                return;
+            }
             candidates.forEach(candidate => {
                 const li = document.createElement('li');
                 li.className = 'py-4 flex justify-between items-center';
@@ -753,6 +806,10 @@
         function renderCertificationResults(results) {
             const tableBody = document.getElementById('resultsTableBody');
             tableBody.innerHTML = '';
+            if (results.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-gray-500">Нет результатов аттестаций.</td></tr>`;
+                return;
+            }
             results.forEach(result => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -770,46 +827,91 @@
         function renderMyReports(reports) {
             const reportsList = document.getElementById('myReportsList');
             reportsList.innerHTML = '';
-            reports.filter(r => r.type === 'report').forEach(report => {
-                const li = document.createElement('li');
-                li.className = 'py-4';
-                li.innerHTML = `<p class="text-lg font-bold">${report.subject}</p><p class="text-sm text-gray-600">${report.text}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(report.date).toLocaleString()}</p>`;
-                reportsList.appendChild(li);
-            });
+            const userReports = reports.filter(r => r.type === 'report');
+            if (userReports.length === 0) {
+                 reportsList.innerHTML = '<p class="text-gray-500">Вы пока не подавали заявлений.</p>';
+            } else {
+                 userReports.forEach(report => {
+                    const li = document.createElement('li');
+                    li.className = 'py-4';
+                    li.innerHTML = `<p class="text-lg font-bold">${report.subject}</p><p class="text-sm text-gray-600">${report.text}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(report.date).toLocaleString()}</p>`;
+                    reportsList.appendChild(li);
+                });
+            }
 
             const inactivesList = document.getElementById('myInactivesList');
             inactivesList.innerHTML = '';
-            reports.filter(r => r.type === 'inactive').forEach(inactive => {
-                const li = document.createElement('li');
-                li.className = 'py-4';
-                li.innerHTML = `<p class="text-lg font-bold">Неактив: ${inactive.startDate} по ${inactive.endDate}</p><p class="text-sm text-gray-600">Причина: ${inactive.reason}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(inactive.date).toLocaleString()}</p>`;
-                inactivesList.appendChild(li);
-            });
+            const userInactives = reports.filter(r => r.type === 'inactive');
+            if (userInactives.length === 0) {
+                inactivesList.innerHTML = '<p class="text-gray-500">Вы пока не оставляли неактивов.</p>';
+            } else {
+                 userInactives.forEach(inactive => {
+                    const li = document.createElement('li');
+                    li.className = 'py-4';
+                    li.innerHTML = `<p class="text-lg font-bold">Неактив: ${inactive.startDate} по ${inactive.endDate}</p><p class="text-sm text-gray-600">Причина: ${inactive.reason}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(inactive.date).toLocaleString()}</p>`;
+                    inactivesList.appendChild(li);
+                });
+            }
         }
 
         function renderAllReports(reports) {
             const reportsList = document.getElementById('allReportsList');
             reportsList.innerHTML = '';
-            reports.filter(r => r.type === 'report').forEach(report => {
-                const li = document.createElement('li');
-                li.className = 'py-4';
-                li.innerHTML = `<p class="text-lg font-bold">${report.subject} от ${report.nickname}</p><p class="text-sm text-gray-600">${report.text}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(report.date).toLocaleString()}</p>`;
-                reportsList.appendChild(li);
-            });
+            const allReports = reports.filter(r => r.type === 'report');
+            if (allReports.length === 0) {
+                 reportsList.innerHTML = '<p class="text-gray-500">Заявлений пока нет.</p>';
+            } else {
+                allReports.forEach(report => {
+                    const li = document.createElement('li');
+                    li.className = 'py-4';
+                    li.innerHTML = `<p class="text-lg font-bold">${report.subject} от ${report.nickname}</p><p class="text-sm text-gray-600">${report.text}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(report.date).toLocaleString()}</p>`;
+                    reportsList.appendChild(li);
+                });
+            }
 
             const inactivesList = document.getElementById('allInactivesList');
             inactivesList.innerHTML = '';
-            reports.filter(r => r.type === 'inactive').forEach(inactive => {
+            const allInactives = reports.filter(r => r.type === 'inactive');
+            if (allInactives.length === 0) {
+                inactivesList.innerHTML = '<p class="text-gray-500">Неактивов пока нет.</p>';
+            } else {
+                allInactives.forEach(inactive => {
+                    const li = document.createElement('li');
+                    li.className = 'py-4';
+                    li.innerHTML = `<p class="text-lg font-bold">Неактив: ${inactive.startDate} по ${inactive.endDate} от ${inactive.nickname}</p><p class="text-sm text-gray-600">Причина: ${inactive.reason}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(inactive.date).toLocaleString()}</p>`;
+                    inactivesList.appendChild(li);
+                });
+            }
+        }
+
+        function renderWeeklyActivityList(activities) {
+            const list = document.getElementById('weeklyActivityList');
+            list.innerHTML = '';
+            if (activities.length === 0) {
+                list.innerHTML = '<p class="text-gray-500">За последнюю неделю не было отчетов или неактивов.</p>';
+                return;
+            }
+            activities.forEach(activity => {
                 const li = document.createElement('li');
                 li.className = 'py-4';
-                li.innerHTML = `<p class="text-lg font-bold">Неактив: ${inactive.startDate} по ${inactive.endDate} от ${inactive.nickname}</p><p class="text-sm text-gray-600">Причина: ${inactive.reason}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(inactive.date).toLocaleString()}</p>`;
-                inactivesList.appendChild(li);
+                let activityDetails = '';
+                if (activity.type === 'report') {
+                    activityDetails = `подал(-а) отчет "<strong>${activity.subject}</strong>"`;
+                } else if (activity.type === 'inactive') {
+                    activityDetails = `оставил(-а) неактив`;
+                }
+                li.innerHTML = `<p class="text-lg font-bold">${activity.nickname}</p><p class="text-sm text-gray-600">${activityDetails} от ${new Date(activity.date).toLocaleDateString()}</p>`;
+                list.appendChild(li);
             });
         }
 
         function renderTraineeTests(tests) {
             const list = document.getElementById('traineeTestsList');
             list.innerHTML = '';
+            if (tests.length === 0) {
+                list.innerHTML = '<p class="text-gray-500">Вам не назначено ни одной аттестации.</p>';
+                return;
+            }
             tests.forEach(test => {
                 const li = document.createElement('li');
                 li.className = 'py-4 flex justify-between items-center';
@@ -839,6 +941,7 @@
             if (result) {
                 closeModal('addAccountModal');
                 loadAccounts();
+                alert('Аккаунт успешно добавлен!');
             }
         }
 
@@ -848,6 +951,7 @@
             if (account) {
                 document.getElementById('editAccountId').value = account.id;
                 document.getElementById('editAccountNickname').value = account.nickname;
+                document.getElementById('editAccountRole').value = account.role;
                 document.getElementById('editAccountCode').value = account.auth_code;
                 document.getElementById('editSpecialCode').value = account.special_code;
                 openModal('editAccountModal');
@@ -867,6 +971,7 @@
             if (result) {
                 closeModal('editAccountModal');
                 loadAccounts();
+                alert('Изменения сохранены!');
             }
         }
 
@@ -940,7 +1045,7 @@
                             <label class="block text-gray-700">Правильный ответ:</label>
                             <input type="text" data-field="answer" value="${q.answer}" class="shadow border rounded w-full py-2 px-3">
                         </div>
-                        <button onclick="deleteQuestion(${q.id})" class="bg-red-500 text-white py-1 px-2 rounded text-sm">Удалить вопрос</button>
+                        <button type="button" onclick="deleteQuestion(${q.id})" class="bg-red-500 text-white py-1 px-2 rounded text-sm">Удалить вопрос</button>
                     `;
                     container.appendChild(div);
                 });
@@ -967,7 +1072,7 @@
                     <label class="block text-gray-700">Правильный ответ:</label>
                     <input type="text" data-field="answer" value="" class="shadow border rounded w-full py-2 px-3">
                 </div>
-                <button onclick="deleteQuestion(${newId})" class="bg-red-500 text-white py-1 px-2 rounded text-sm">Удалить вопрос</button>
+                <button type="button" onclick="deleteQuestion(${newId})" class="bg-red-500 text-white py-1 px-2 rounded text-sm">Удалить вопрос</button>
             `;
             container.appendChild(div);
         }
@@ -995,6 +1100,7 @@
                 const result = await sendData(`/tests/${currentEditingTestId}/questions/${questionId}`, 'DELETE', {});
                 if (result) {
                     editTest(currentEditingTestId);
+                    alert('Вопрос успешно удален!');
                 }
             }
         }
@@ -1060,6 +1166,7 @@
             if (result) {
                 closeModal('addParadeModal');
                 loadParades();
+                alert('Строй успешно запланирован!');
             }
         }
         
@@ -1068,6 +1175,7 @@
                 const result = await sendData(`/parades/${paradeId}`, 'DELETE', {});
                 if (result) {
                     loadParades();
+                    alert('Строй успешно удален!');
                 }
             }
         }
@@ -1078,6 +1186,7 @@
             const data = {
                 type: 'report',
                 userId: currentUser.id,
+                nickname: currentUser.nickname,
                 subject: form.reportSubject.value,
                 text: form.reportText.value
             };
@@ -1085,6 +1194,7 @@
             if (result) {
                 closeModal('reportModal');
                 loadMyReports();
+                alert('Заявление успешно отправлено!');
             }
         }
 
@@ -1094,6 +1204,7 @@
             const data = {
                 type: 'inactive',
                 userId: currentUser.id,
+                nickname: currentUser.nickname,
                 startDate: form.startDate.value,
                 endDate: form.endDate.value,
                 reason: form.reason.value
@@ -1102,6 +1213,7 @@
             if (result) {
                 closeModal('inactiveModal');
                 loadMyReports();
+                alert('Неактив успешно отправлен!');
             }
         }
 
