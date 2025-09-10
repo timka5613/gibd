@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление строями</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключение Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            transition: all 0.3s ease-in-out;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            .sidebar:hover {
+                width: 250px;
+            }
+            .sidebar .nav-text {
+                display: none;
+            }
+            .sidebar:hover .nav-text {
+                display: inline;
+            }
+        }
+        .modal {
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex font-sans text-gray-800">
+
+    <!-- Боковое навигационное меню -->
+    <aside class="sidebar bg-gray-900 text-white p-6 shadow-lg rounded-r-2xl">
+        <div class="flex items-center mb-8">
+            <i class="fas fa-traffic-light text-3xl text-yellow-500 mr-3"></i>
+            <h1 class="text-2xl font-bold nav-text">ГИБДД ОРЛС</h1>
+        </div>
+        <nav>
+            <ul class="space-y-4">
+                <li data-role="all">
+                    <a href="main.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-home text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Главная</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="employee_management.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-users text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление сотрудниками</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="formations.html" class="flex items-center py-3 px-4 rounded-lg bg-gray-700">
+                        <i class="fas fa-chess-knight text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление строями</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="candidates.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-user-tie text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Кандидаты в начальники</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="orls_reports.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-file-invoice text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Отчетность ОРЛС</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="orls_reports_form.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-chart-line text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Сформировка отчетов</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="tools.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-toolbox text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление инструментами</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="attestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-clipboard-check text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Прохождение аттестации</span>
+                    </a>
+                </li>
+                <li data-role="senior_instructor">
+                    <a href="attestation_results.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-poll text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Результаты аттестации</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="attestation_reset.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-undo-alt text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Обнуление аттестации</span>
+                    </a>
+                </li>
+                 <li data-role="all">
+                    <a href="reattestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-sync-alt text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Переаттестации</span>
+                    </a>
+                </li>
+                 <li data-role="all">
+                    <a href="add_attestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-plus-circle text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Аттестации</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="information_department.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-info-circle text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Информационный отдел</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Основное содержимое панели -->
+    <main class="main-content flex-grow p-8">
+        <div class="container mx-auto">
+            <div id="accessDenied" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl relative text-center">
+                <span class="block sm:inline">У вас нет доступа к этой странице.</span>
+            </div>
+            
+            <div id="content" class="bg-white rounded-3xl shadow-lg p-8 hidden">
+                <h2 class="text-4xl font-bold text-gray-900 mb-6">Управление строями</h2>
+                
+                <!-- Форма добавления строя -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Добавить новый строй</h3>
+                    <form id="addFormationForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div>
+                            <label for="formationName" class="block text-sm font-medium text-gray-700">Название строя</label>
+                            <input type="text" id="formationName" name="formationName" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg">
+                        </div>
+                        <div class="col-span-1 md:col-span-2 lg:col-span-3">
+                            <label for="participants" class="block text-sm font-medium text-gray-700">Участники (введите никнеймы через запятую)</label>
+                            <textarea id="participants" name="participants" rows="4" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg"></textarea>
+                        </div>
+                        <div class="col-span-1 md:col-span-2 lg:col-span-3 text-right">
+                            <button type="submit" id="addFormationBtn" disabled class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                Добавить строй
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Список строев -->
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Список строев</h3>
+                <div class="overflow-x-auto rounded-lg shadow">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Название строя</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Создатель</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Участники</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Дата</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="formationsTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Здесь будут отображаться данные строев -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальное окно для редактирования -->
+    <div id="editModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-xl w-11/12 md:w-1/2">
+            <h3 class="text-2xl font-semibold mb-4">Редактировать строй</h3>
+            <form id="editFormationForm">
+                <input type="hidden" id="editFormationId">
+                <div class="mb-4">
+                    <label for="editFormationName" class="block text-sm font-medium text-gray-700">Название строя</label>
+                    <input type="text" id="editFormationName" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg">
+                </div>
+                <div class="mb-4">
+                    <label for="editParticipants" class="block text-sm font-medium text-gray-700">Участники (введите никнеймы через запятую)</label>
+                    <textarea id="editParticipants" rows="4" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg"></textarea>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" id="cancelEditBtn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                        Отмена
+                    </button>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Сохранить изменения
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Модальное окно для подтверждения удаления -->
+    <div id="confirmModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-xl w-11/12 md:w-1/3">
+            <h3 class="text-xl font-semibold mb-4">Подтвердите действие</h3>
+            <p id="confirmMessage" class="mb-6"></p>
+            <div class="flex justify-end space-x-4">
+                <button type="button" id="confirmCancelBtn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    Отмена
+                </button>
+                <button type="button" id="confirmOkBtn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    ОК
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, onSnapshot, collection, addDoc, doc, deleteDoc, updateDoc, getDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // setLogLevel('debug');
+        
+        // Глобальные переменные Canvas, предоставляемые средой
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const authToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        let db, auth;
+        let userId = null;
+        
+        const authorizedRoles = ['all', 'deputy_head', 'head', 'instructor', 'senior_instructor', 'trainee'];
+        
+        function checkAccess(role) {
+            const accessDenied = document.getElementById('accessDenied');
+            const content = document.getElementById('content');
+            if (authorizedRoles.includes(role)) {
+                content.classList.remove('hidden');
+                accessDenied.classList.add('hidden');
+            } else {
+                content.classList.add('hidden');
+                accessDenied.classList.remove('hidden');
+            }
+        }
+
+        function updateUIForRole(role) {
+            const navItems = document.querySelectorAll('aside nav li');
+            const rolesMap = {
+                'deputy_head': ['all', 'deputy_head', 'head'], 
+                'head': ['all', 'deputy_head', 'head'],
+                'instructor': ['all', 'senior_instructor'],
+                'senior_instructor': ['all', 'senior_instructor'],
+                'trainee': ['all'],
+                'all': ['all']
+            };
+            const allowedRoles = rolesMap[role] || [];
+            
+            navItems.forEach(item => {
+                const itemRole = item.dataset.role;
+                if (itemRole === 'deputy_head' && role === 'head') {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = allowedRoles.includes(itemRole) ? 'block' : 'none';
+                }
+            });
+        }
+        
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+        }
+
+        function showConfirm(message, onConfirm) {
+            const confirmMessage = document.getElementById('confirmMessage');
+            const confirmOkBtn = document.getElementById('confirmOkBtn');
+            const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+            confirmMessage.textContent = message;
+            showModal('confirmModal');
+            
+            confirmOkBtn.onclick = () => {
+                onConfirm();
+                closeModal('confirmModal');
+            };
+            
+            confirmCancelBtn.onclick = () => {
+                closeModal('confirmModal');
+            };
+        }
+
+        function listenForFormations() {
+            if (!db || !userId) {
+                console.error("Firebase Firestore не инициализирован или пользователь не аутентифицирован.");
+                return;
+            }
+
+            const formationsTableBody = document.getElementById('formationsTableBody');
+            const formationsCollection = collection(db, `artifacts/${appId}/public/data/formations`);
+            
+            onSnapshot(formationsCollection, (snapshot) => {
+                formationsTableBody.innerHTML = '';
+                if (snapshot.empty) {
+                    formationsTableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-500">Строи не найдены.</td></tr>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const formation = doc.data();
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-100 transition-colors duration-200';
+                    const isCreator = userId && formation.creatorId === userId;
+                    
+                    const actions = isCreator ? `
+                        <button data-id="${doc.id}" class="edit-btn text-blue-600 hover:text-blue-900 rounded-lg mr-2">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button data-id="${doc.id}" class="delete-btn text-red-600 hover:text-red-900 rounded-lg">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    ` : '';
+                    
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${formation.name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formation.creatorName}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500 max-w-sm overflow-hidden text-ellipsis">
+                            ${formation.participants.join(', ')}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(formation.createdAt).toLocaleString()}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            ${actions}
+                        </td>
+                    `;
+                    formationsTableBody.appendChild(row);
+                });
+            }, (error) => {
+                console.error("Ошибка при получении строев:", error);
+            });
+        }
+        
+        function setupAppEventHandlers() {
+            const addFormationForm = document.getElementById('addFormationForm');
+            const formationsTableBody = document.getElementById('formationsTableBody');
+            const editFormationForm = document.getElementById('editFormationForm');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+            addFormationForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                console.log("Form submission handler started.");
+
+                if (!db || !userId) {
+                    console.error("Firebase не инициализирован или пользователь не аутентифицирован.");
+                    return;
+                }
+
+                const formationName = document.getElementById('formationName').value;
+                const participantsText = document.getElementById('participants').value;
+                const participants = participantsText.split(',').map(p => p.trim()).filter(p => p);
+                const creatorName = auth.currentUser.displayName || auth.currentUser.email || `Пользователь ${userId}`;
+
+                const formationData = {
+                    name: formationName,
+                    creatorId: userId,
+                    creatorName: creatorName,
+                    participants: participants,
+                    createdAt: Date.now()
+                };
+                
+                try {
+                    const formationsCollection = collection(db, `artifacts/${appId}/public/data/formations`);
+                    await addDoc(formationsCollection, formationData);
+                    addFormationForm.reset();
+                    console.log("Строй добавлен успешно.");
+                } catch (e) {
+                    console.error("Ошибка при добавлении строя: ", e);
+                }
+            });
+
+            formationsTableBody.addEventListener('click', async (e) => {
+                const id = e.target.closest('button')?.dataset.id;
+                if (!id) return;
+                
+                const isDeleteBtn = e.target.closest('.delete-btn');
+                const isEditBtn = e.target.closest('.edit-btn');
+                
+                if (isDeleteBtn) {
+                    showConfirm('Вы уверены, что хотите удалить этот строй?', async () => {
+                        try {
+                            const formationDocRef = doc(db, `artifacts/${appId}/public/data/formations`, id);
+                            await deleteDoc(formationDocRef);
+                            console.log("Строй удален успешно.");
+                        } catch (e) {
+                            console.error("Ошибка при удалении строя: ", e);
+                        }
+                    });
+                } else if (isEditBtn) {
+                    try {
+                        const formationDocRef = doc(db, `artifacts/${appId}/public/data/formations`, id);
+                        const formationDoc = await getDoc(formationDocRef);
+                        
+                        if (formationDoc.exists()) {
+                            const data = formationDoc.data();
+                            document.getElementById('editFormationId').value = id;
+                            document.getElementById('editFormationName').value = data.name;
+                            document.getElementById('editParticipants').value = data.participants.join(', ');
+                            showModal('editModal');
+                        }
+                    } catch (e) {
+                        console.error("Ошибка при загрузке данных для редактирования:", e);
+                    }
+                }
+            });
+
+            editFormationForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('editFormationId').value;
+                const newName = document.getElementById('editFormationName').value;
+                const newParticipantsText = document.getElementById('editParticipants').value;
+                const newParticipants = newParticipantsText.split(',').map(p => p.trim()).filter(p => p);
+                
+                try {
+                    const formationDocRef = doc(db, `artifacts/${appId}/public/data/formations`, id);
+                    await updateDoc(formationDocRef, {
+                        name: newName,
+                        participants: newParticipants,
+                    });
+                    closeModal('editModal');
+                    console.log("Строй успешно обновлен.");
+                } catch (e) {
+                    console.error("Ошибка при обновлении строя:", e);
+                }
+            });
+
+            cancelEditBtn.addEventListener('click', () => {
+                closeModal('editModal');
+            });
+        }
+        
+        // Основная логика инициализации
+        async function initializeAppAndListeners() {
+            if (Object.keys(firebaseConfig).length > 0) {
+                const firebaseApp = initializeApp(firebaseConfig);
+                db = getFirestore(firebaseApp);
+                auth = getAuth(firebaseApp);
+                
+                try {
+                    if (authToken) {
+                        await signInWithCustomToken(auth, authToken);
+                        console.log("Вход по пользовательскому токену успешен.");
+                    } else {
+                        await signInAnonymously(auth);
+                        console.log("Анонимный вход успешен.");
+                    }
+                    
+                    userId = auth.currentUser.uid;
+                    updateUIForRole('all');
+                    checkAccess('all');
+                    document.getElementById('addFormationBtn').disabled = false;
+                    listenForFormations();
+                    setupAppEventHandlers();
+                    
+                } catch (error) {
+                    console.error("Ошибка аутентификации:", error);
+                    checkAccess('none'); // Скрыть UI, если вход не удался
+                }
+            }
+        }
+        
+        initializeAppAndListeners();
+    </script>
+</body>
+</html>
