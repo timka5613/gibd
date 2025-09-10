@@ -11,809 +11,1124 @@
         .main-content { width: calc(100% - 250px); min-height: 100vh; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .modal {
-            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
-            opacity: 0;
-            visibility: hidden;
-        }
-        .modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        .question-item {
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        .question-item button {
-            margin-left: 0.5rem;
-        }
+        .modal { transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out; opacity: 0; visibility: hidden; }
+        .modal.active { opacity: 1; visibility: visible; }
+        .question-item { border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; }
+        .question-item button { margin-left: 0.5rem; }
     </style>
 </head>
-<body class="bg-gray-900 text-white flex">
-    <aside class="sidebar bg-gray-800 text-gray-400 p-6 flex flex-col items-center">
-        <div class="logo-container mb-8">
-            <img src="https://i.ibb.co/6P2M9xP/logo.png" alt="ГИБДД ОРЛС" class="h-20 w-20 rounded-full">
+<body class="flex bg-gray-100">
+
+    <div class="sidebar bg-blue-800 text-white flex flex-col" style="display: none;">
+        <div class="logo-box p-4 border-b border-blue-700"><h1 class="text-xl font-bold">ГИБДД ОРЛС</h1></div>
+        <div class="user-info p-4 flex items-center border-b border-blue-700">
+            <div class="bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center mr-3"><i class="fas fa-user"></i></div>
+            <div>
+                <div class="font-medium" id="userName">Загрузка...</div>
+                <div class="text-xs text-blue-200" id="userRole">Загрузка...</div>
+            </div>
         </div>
-        <nav class="w-full">
-            <ul class="space-y-4">
-                <li><a href="#" class="tab-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200" data-tab="main-page-tab"><i class="fas fa-home mr-2"></i>Главная</a></li>
-                <li><a href="#" class="tab-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200" data-tab="upcoming-events-tab"><i class="fas fa-calendar-alt mr-2"></i>Предстоящие строи</a></li>
-                <li><a href="#" class="tab-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200" data-tab="manage-staff-tab"><i class="fas fa-users-cog mr-2"></i>Управление сотрудниками</a></li>
-                <li><a href="#" class="tab-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200" data-tab="certifications-tab"><i class="fas fa-clipboard-check mr-2"></i>Аттестации/Переаттестации</a></li>
-                <li><a href="#" class="tab-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200" data-tab="reporting-tab"><i class="fas fa-chart-line mr-2"></i>Отчетность</a></li>
-                <li><a href="#" class="tab-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200" data-tab="info-tab"><i class="fas fa-info-circle mr-2"></i>Информационный раздел</a></li>
-                <li><a href="#" class="tab-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200" data-tab="tests-tab"><i class="fas fa-question-circle mr-2"></i>Тесты для сдачи</a></li>
+        <nav class="flex-1 overflow-y-auto py-2">
+            <ul>
+                <li><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('dashboard')"><i class="fas fa-tachometer-alt mr-3"></i><span class="nav-text">Главная</span></a></li>
+                <li id="manageStaffLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('manage-staff')"><i class="fas fa-users-cog mr-3"></i><span class="nav-text">Управление сотрудниками</span></a></li>
+                <li id="manageCertificationsLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('manage-certifications')"><i class="fas fa-clipboard-list mr-3"></i><span class="nav-text">Управление аттестациями</span></a></li>
+                <li id="manageParadesLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('manage-parades')"><i class="fas fa-bullhorn mr-3"></i><span class="nav-text">Управление строями</span></a></li>
+                <li id="manageCandidatesLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('manage-candidates')"><i class="fas fa-user-tie mr-3"></i><span class="nav-text">Кандидаты в начальники</span></a></li>
+                <li><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('reports')"><i class="fas fa-chart-bar mr-3"></i><span class="nav-text">Отчетность</span></a></li>
+                <li id="orlsReportsLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('orls-reports')"><i class="fas fa-file-alt mr-3"></i><span class="nav-text">Отчетность ОРЛС</span></a></li>
+                <li id="certificationLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('certification')"><i class="fas fa-clipboard-check mr-3"></i><span class="nav-text">Прохождение аттестации</span></a></li>
+                <li id="certificationResultsLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="showTab('certification-results')"><i class="fas fa-graduation-cap mr-3"></i><span class="nav-text">Результаты аттестаций</span></a></li>
+                <li id="fullResetLink"><a href="#" class="flex items-center p-3 hover:bg-blue-700 transition" onclick="openModal('fullResetModal')"><i class="fas fa-sync-alt mr-3"></i><span class="nav-text">Полное обнуление</span></a></li>
             </ul>
         </nav>
-    </aside>
+        <button onclick="logout()" class="p-4 bg-blue-700 hover:bg-blue-600 transition text-center text-sm">Выйти</button>
+    </div>
 
-    <main class="main-content p-8">
-        <div id="main-page-tab" class="tab-content active">
-            <h1 class="text-3xl font-bold mb-6">Главная страница</h1>
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-2xl font-semibold">Новости от руководства</h2>
-                <button onclick="openModal('addNewsModal')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg"><i class="fas fa-plus mr-2"></i>Добавить новость</button>
-            </div>
-            <div id="news-list" class="space-y-4">
+    <div class="main-content bg-gray-100 p-8" style="display: none;">
+        <div id="dashboard" class="tab-content active">
+            <h2 class="text-2xl font-bold mb-6">Главная</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow flex items-center">
+                    <div class="bg-blue-100 p-3 rounded-full mr-4"><i class="fas fa-users text-blue-600"></i></div>
+                    <div><p class="text-gray-500 text-sm">Всего аккаунтов</p><p class="text-2xl font-bold" id="totalAccounts">0</p></div>
                 </div>
+                <div class="bg-white p-6 rounded-lg shadow flex items-center">
+                    <div class="bg-green-100 p-3 rounded-full mr-4"><i class="fas fa-clipboard-check text-green-600"></i></div>
+                    <div><p class="text-gray-500 text-sm">Всего тестов</p><p class="text-2xl font-bold" id="totalTests">0</p></div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow flex items-center">
+                    <div class="bg-yellow-100 p-3 rounded-full mr-4"><i class="fas fa-exclamation-triangle text-yellow-600"></i></div>
+                    <div><p class="text-gray-500 text-sm">Всего пройденных аттестаций</p><p class="text-2xl font-bold" id="completedCertifications">0</p></div>
+                </div>
+            </div>
+            
             <div class="mt-8">
-                <h2 class="text-2xl font-semibold mb-4">Администрирование</h2>
-                <button onclick="resetDatabase()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">Полное обнуление базы данных</button>
+                <h3 class="text-xl font-bold mb-4">Предстоящие строи</h3>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <ul id="upcomingParadesList" class="divide-y divide-gray-200"></ul>
+                </div>
             </div>
         </div>
 
-        <div id="upcoming-events-tab" class="tab-content">
-            <h1 class="text-3xl font-bold mb-6">Предстоящие строи</h1>
-            <button onclick="openModal('addEventModal')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mb-4"><i class="fas fa-plus mr-2"></i>Создать строй</button>
-            <div id="upcoming-events" class="space-y-4">
-                </div>
-        </div>
+        <div id="manage-staff" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6">Управление сотрудниками</h2>
+            <button onclick="openModal('addAccountModal')" class="bg-green-500 text-white py-2 px-4 rounded-lg mb-4 hover:bg-green-600 transition">Добавить аккаунт</button>
 
-        <div id="manage-staff-tab" class="tab-content">
-            <h1 class="text-3xl font-bold mb-6">Управление сотрудниками</h1>
-            <button onclick="openModal('addEmployeeModal')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mb-4"><i class="fas fa-user-plus mr-2"></i>Добавить сотрудника</button>
-            <div class="bg-gray-800 rounded-lg p-6 shadow-md overflow-x-auto">
-                <table class="min-w-full">
-                    <thead>
-                        <tr class="text-gray-400">
-                            <th class="py-2 px-4 text-left">Ник</th>
-                            <th class="py-2 px-4 text-left">Звание</th>
-                            <th class="py-2 px-4 text-left">Должность</th>
-                            <th class="py-2 px-4 text-left">Выговоры</th>
-                            <th class="py-2 px-4 text-left">Роль</th>
-                        </tr>
-                    </thead>
-                    <tbody id="employee-list" class="text-gray-300">
-                        </tbody>
+            <div class="mb-4">
+                <label for="position-filter" class="block text-gray-700 text-sm font-bold mb-2">Фильтр по должности:</label>
+                <select id="position-filter" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="all">Все должности</option>
+                </select>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow">
+                <table class="w-full text-left table-auto">
+                    <thead><tr class="bg-gray-200"><th class="py-2 px-4">ID</th><th class="py-2 px-4">Имя пользователя</th><th class="py-2 px-4">Роль</th><th class="py-2 px-4">Последняя активность</th><th class="py-2 px-4">Действия</th></tr></thead>
+                    <tbody id="accountsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="manage-certifications" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6">Управление аттестациями</h2>
+            <div class="flex space-x-4 mb-6">
+                <button onclick="openModal('addTestModal')" class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition">Добавить новый тест</button>
+                <button onclick="openModal('testPasswordModal')" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Пароль для тестов</button>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <ul id="testsList" class="divide-y divide-gray-200"></ul>
+            </div>
+        </div>
+        
+        <div id="manage-parades" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6">Управление строями</h2>
+            <button onclick="openModal('addParadeModal')" class="bg-blue-500 text-white py-2 px-4 rounded-lg mb-4 hover:bg-blue-600 transition">Запланировать строй</button>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-bold mb-4">Предстоящие строи</h3>
+                <ul id="paradesList" class="divide-y divide-gray-200"></ul>
+            </div>
+        </div>
+        
+        <div id="manage-candidates" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6">Кандидаты в начальники</h2>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <ul id="candidatesList" class="divide-y divide-gray-200"></ul>
+            </div>
+        </div>
+        
+        <div id="certification-results" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6">Результаты аттестаций</h2>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <table class="w-full text-left table-auto">
+                    <thead><tr class="bg-gray-200"><th class="py-2 px-4">Сотрудник</th><th class="py-2 px-4">Тест</th><th class="py-2 px-4">Дата</th><th class="py-2 px-4">Результат</th><th class="py-2 px-4">Детали</th></tr></thead>
+                    <tbody id="resultsTableBody"></tbody>
                 </table>
             </div>
         </div>
 
-        <div id="certifications-tab" class="tab-content">
-            <h1 class="text-3xl font-bold mb-6">Аттестации/Переаттестации</h1>
+        <div id="reports" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6">Отчетность</h2>
             <div class="flex space-x-4 mb-4">
-                <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg" onclick="openModal('addCertificationModal')"><i class="fas fa-plus mr-2"></i>Добавить аттестацию</button>
-                <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg" onclick="openModal('addRecertificationModal')"><i class="fas fa-sync-alt mr-2"></i>Добавить переаттестацию</button>
+                <button onclick="openModal('reportModal')" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Подать заявление</button>
+                <button onclick="openModal('inactiveModal')" class="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition">Оставить неактив</button>
             </div>
-            <div class="mb-4">
-                <input type="text" id="filter-nickname" placeholder="Фильтр по никнейму" class="bg-gray-700 text-white rounded-lg p-2 w-full md:w-1/3">
-                <button onclick="filterCertifications()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg ml-2">Поиск</button>
+            
+            <div class="bg-white p-6 rounded-lg shadow mt-4">
+                <h3 class="text-lg font-bold mb-4">Мои заявления</h3>
+                <ul id="myReportsList" class="divide-y divide-gray-200"></ul>
             </div>
-            <div id="certifications-list" class="space-y-4">
-                </div>
+
+            <div class="bg-white p-6 rounded-lg shadow mt-4">
+                <h3 class="text-lg font-bold mb-4">Мои неактивы</h3>
+                <ul id="myInactivesList" class="divide-y divide-gray-200"></ul>
+            </div>
         </div>
 
-        <div id="reporting-tab" class="tab-content">
-            <h1 class="text-3xl font-bold mb-6">Отчетность</h1>
-            <button onclick="openModal('addReportModal')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mb-4"><i class="fas fa-plus mr-2"></i>Подать отчет</button>
-            <div id="reports-list" class="space-y-4">
-                </div>
-        </div>
-
-        <div id="info-tab" class="tab-content">
-            <h1 class="text-3xl font-bold mb-6">Информационный раздел</h1>
-            <button onclick="openModal('addInfoBlockModal')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mb-4"><i class="fas fa-plus mr-2"></i>Добавить блок</button>
-            <div id="info-blocks-container" class="space-y-4">
-                </div>
+        <div id="orls-reports" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6">Отчетность ОРЛС (для руководства)</h2>
+            <div class="bg-white p-6 rounded-lg shadow mt-4">
+                <h3 class="text-lg font-bold mb-4">Заявления сотрудников</h3>
+                <ul id="allReportsList" class="divide-y divide-gray-200"></ul>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow mt-4">
+                <h3 class="text-lg font-bold mb-4">Неактивы сотрудников</h3>
+                <ul id="allInactivesList" class="divide-y divide-gray-200"></ul>
+            </div>
         </div>
         
-        <div id="tests-tab" class="tab-content">
-            <h1 class="text-3xl font-bold mb-6">Тесты для сдачи</h1>
-            <button onclick="openModal('addTestModal')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mb-4"><i class="fas fa-plus mr-2"></i>Создать тест</button>
-            <div id="tests-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div id="certification" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6">Прохождение аттестации</h2>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <ul id="traineeTestsList" class="divide-y divide-gray-200"></ul>
+            </div>
+        </div>
+    </div>
+    
+    <div id="specialCodeModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold">Введите специальный код</h3>
+            </div>
+            <form id="specialCodeForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Специальный код</label>
+                    <input type="password" id="specialCodeInput" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                 </div>
+                <div class="flex justify-end">
+                    <button type="button" onclick="window.location.href='index.html'" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
+                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Подтвердить</button>
+                </div>
+            </form>
         </div>
-    </main>
+    </div>
 
-    <div id="addNewsModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-800 p-8 rounded-lg w-1/3">
-            <h2 class="text-2xl font-bold mb-4">Добавление новости</h2>
-            <input id="newsTitle" type="text" placeholder="Заголовок новости" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <textarea id="newsContent" placeholder="Текст новости" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4 h-32"></textarea>
-            <select id="newsAuthorRole" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-                <option value="Начальник ОРЛС">Начальник ОРЛС</option>
-                <option value="Зам. начальника ОРЛС">Зам. начальника ОРЛС</option>
-            </select>
-            <div class="flex justify-end space-x-4">
-                <button onclick="addNews()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Сохранить</button>
-                <button onclick="closeModal('addNewsModal')" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Отмена</button>
+    <div id="addAccountModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold">Добавить новый аккаунт</h3>
+                <button onclick="closeModal('addAccountModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <form id="addAccountForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Имя пользователя</label>
+                    <input type="text" name="nickname" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Роль</label>
+                    <select id="newAccountRole" name="role" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Основной код</label>
+                    <input type="text" name="auth_code" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Специальный код</label>
+                    <input type="text" name="special_code" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" onclick="closeModal('addAccountModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
+                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="editAccountModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold">Редактировать аккаунт</h3>
+                <button onclick="closeModal('editAccountModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <form id="editAccountForm">
+                <input type="hidden" id="editAccountId">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Имя пользователя</label>
+                    <input type="text" id="editAccountNickname" name="nickname" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Роль</label>
+                    <select id="editAccountRole" name="role" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Основной код</label>
+                    <input type="text" id="editAccountCode" name="auth_code" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Специальный код</label>
+                    <input type="text" id="editSpecialCode" name="special_code" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <button type="button" onclick="closeModal('editAccountModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
+                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Сохранить</button>
+                </div>
+            </form>
+            <div class="mt-4 pt-4 border-t">
+                <button onclick="openAssignTestModal()" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Выдать аттестацию</button>
+                <button onclick="proposeCandidate()" class="bg-purple-500 text-white py-2 px-4 rounded-lg hover:bg-purple-600 transition">Выдвинуть в начальники</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="assignTestModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold">Выдать аттестацию сотруднику</h3>
+                <button onclick="closeModal('assignTestModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <form id="assignTestForm">
+                <input type="hidden" id="assignTestAccountId">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Выберите аттестацию</label>
+                    <select id="assignTestSelect" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Время на прохождение (минуты)</label>
+                    <input type="number" id="testTimeInput" min="1" max="120" value="30" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" onclick="closeModal('assignTestModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
+                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Выдать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="addTestModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold">Добавить новый тест</h3>
+                <button onclick="closeModal('addTestModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <form id="addTestForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Название теста</label>
+                    <input type="text" name="testName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Описание</label>
+                    <textarea name="description" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" onclick="closeModal('addTestModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
+                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="editTestModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-2/3">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold">Редактировать тест: <span id="editTestName"></span></h3>
+                <button onclick="closeModal('editTestModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <div id="questionsContainer" class="max-h-96 overflow-y-auto mb-4 p-4 border rounded"></div>
+            <button onclick="addQuestion()" class="bg-blue-500 text-white py-2 px-4 rounded-lg mb-4 hover:bg-blue-600 transition">Добавить вопрос</button>
+            <div class="flex justify-end">
+                <button type="button" onclick="closeModal('editTestModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
+                <button type="button" onclick="saveTestChanges()" class="bg-green-500 text-white py-2 px-4 rounded-lg">Сохранить изменения</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="testPasswordModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold">Пароль для тестов</h3>
+                <button onclick="closeModal('testPasswordModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <p class="mb-4">Пароль для входа в систему тестирования:</p>
+            <div class="flex items-center">
+                <input type="text" id="testPasswordInput" class="border p-2 rounded-lg w-64 mr-4" value="5sJp@L8x" readonly>
+                <button onclick="generateNewPassword()" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Сгенерировать новый</button>
             </div>
         </div>
     </div>
     
-    <div id="addEventModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-800 p-8 rounded-lg w-1/3">
-            <h2 class="text-2xl font-bold mb-4">Создание строя</h2>
-            <input id="eventTitle" type="text" placeholder="Описание строя" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <input id="eventCreator" type="text" placeholder="Ваш никнейм" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <div class="flex justify-end space-x-4">
-                <button onclick="addEvent()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Сохранить</button>
-                <button onclick="closeModal('addEventModal')" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Отмена</button>
+    <div id="reportModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold">Подача заявления</h3>
+                <button onclick="closeModal('reportModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <form id="reportForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Ваша должность</label>
+                    <input type="text" id="reportUserRole" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Тема заявления</label>
+                    <input type="text" name="reportSubject" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Текст заявления</label>
+                    <textarea name="reportText" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32" required></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" onclick="closeModal('reportModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
+                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Отправить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="inactiveModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold">Оставить неактив</h3>
+                <button onclick="closeModal('inactiveModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <form id="inactiveForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Дата начала</label>
+                    <input type="date" name="startDate" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Дата окончания</label>
+                    <input type="date" name="endDate" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Причина</label>
+                    <textarea name="reason" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-24" required></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" onclick="closeModal('inactiveModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
+                    <button type="submit" class="bg-yellow-500 text-white py-2 px-4 rounded-lg">Отправить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="addParadeModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold">Запланировать строй</h3>
+                <button onclick="closeModal('addParadeModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <form id="addParadeForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Подразделение</label>
+                    <input type="text" name="department" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Время</label>
+                    <input type="time" name="paradeTime" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Текст уведомления</label>
+                    <textarea name="paradeText" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-24" required></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" onclick="closeModal('addParadeModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Отмена</button>
+                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg">Запланировать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="fullResetModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-1/3 text-center">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold text-red-600">Осторожно! Полное обнуление</h3>
+                <button onclick="closeModal('fullResetModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <p class="mb-4">Вы уверены, что хотите полностью **обнулить** все данные? Это действие необратимо и приведет к удалению всех аккаунтов, тестов, отчетов и статистики.</p>
+            <div class="flex justify-center gap-4">
+                <button onclick="closeModal('fullResetModal')" class="bg-gray-500 text-white py-2 px-4 rounded-lg">Отмена</button>
+                <button onclick="performFullReset()" class="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition">Подтвердить обнуление</button>
             </div>
         </div>
     </div>
 
-    <div id="addEmployeeModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-800 p-8 rounded-lg w-1/3">
-            <h2 class="text-2xl font-bold mb-4">Добавление сотрудника</h2>
-            <input id="employeeNickname" type="text" placeholder="Никнейм" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <input id="employeeRank" type="text" placeholder="Звание" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <input id="employeePosition" type="text" placeholder="Должность" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <input id="employeeRole" type="text" placeholder="Роль" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <div class="flex justify-end space-x-4">
-                <button onclick="addEmployee()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Добавить</button>
-                <button onclick="closeModal('addEmployeeModal')" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Отмена</button>
+    <div id="detailedResultsModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-2/3 max-w-2xl">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold">Детальный отчет по аттестации</h3>
+                <button onclick="closeModal('detailedResultsModal')" class="text-gray-500 hover:text-gray-700">&times;</button>
             </div>
-        </div>
-    </div>
-
-    <div id="addCertificationModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-800 p-8 rounded-lg w-1/3">
-            <h2 class="text-2xl font-bold mb-4">Добавление аттестации</h2>
-            <input id="certEmployeeNickname" type="text" placeholder="Никнейм сотрудника" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <input id="certAttesterNickname" type="text" placeholder="Никнейм проводящего" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <select id="certAttempt" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-                <option value="1">Первая попытка</option>
-                <option value="2">Вторая попытка</option>
-            </select>
-            <select id="certStatus" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-                <option value="Сдал">Сдал</option>
-                <option value="Не сдал">Не сдал</option>
-            </select>
-            <input id="certEvidenceLink" type="text" placeholder="Ссылка на доказательства" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <div class="flex justify-end space-x-4">
-                <button onclick="addCertification()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Сохранить</button>
-                <button onclick="closeModal('addCertificationModal')" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Отмена</button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="addRecertificationModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-800 p-8 rounded-lg w-1/3">
-            <h2 class="text-2xl font-bold mb-4">Добавление переаттестации</h2>
-            <input id="recertEmployeeNickname" type="text" placeholder="Никнейм сотрудника" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <input id="recertViolation" type="text" placeholder="Что нарушил" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <input id="recertEvidenceLink" type="text" placeholder="Ссылка на доказательства" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <div class="flex justify-end space-x-4">
-                <button onclick="addRecertification()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Сохранить</button>
-                <button onclick="closeModal('addRecertificationModal')" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Отмена</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="addReportModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-800 p-8 rounded-lg w-1/3">
-            <h2 class="text-2xl font-bold mb-4">Подача отчета</h2>
-            <input id="reportEmployeeNickname" type="text" placeholder="Ваш никнейм" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <select id="reportType" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-                <option value="Неактив">Неактив</option>
-                <option value="Отпуск">Отпуск</option>
-            </select>
-            <div class="flex justify-end space-x-4">
-                <button onclick="addReport()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Отправить</button>
-                <button onclick="closeModal('addReportModal')" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Отмена</button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="addInfoBlockModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-800 p-8 rounded-lg w-1/3">
-            <h2 class="text-2xl font-bold mb-4">Добавление информационного блока</h2>
-            <input id="infoBlockTitle" type="text" placeholder="Заголовок" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <textarea id="infoBlockContent" placeholder="Текст блока" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4 h-32"></textarea>
-            <input id="infoBlockAuthorRole" type="text" placeholder="Ваша роль" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <div class="flex justify-end space-x-4">
-                <button onclick="addInfoBlock()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Сохранить</button>
-                <button onclick="closeModal('addInfoBlockModal')" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Отмена</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="addTestModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-800 p-8 rounded-lg w-1/3">
-            <h2 class="text-2xl font-bold mb-4">Создание теста</h2>
-            <input id="testTitle" type="text" placeholder="Название теста" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <div class="flex justify-end space-x-4">
-                <button onclick="addTest()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Сохранить</button>
-                <button onclick="closeModal('addTestModal')" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Отмена</button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="editTestModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-800 p-8 rounded-lg w-1/3 max-h-screen overflow-y-auto">
-            <h2 class="text-2xl font-bold mb-4">Редактирование теста</h2>
-            <input id="editTestTitle" type="text" placeholder="Название теста" class="bg-gray-700 text-white w-full p-2 rounded-lg mb-4">
-            <div id="questions-container"></div>
-            <button onclick="addQuestionToEditModal()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg mt-4"><i class="fas fa-plus mr-2"></i>Добавить вопрос</button>
-            <div class="flex justify-end space-x-4 mt-4">
-                <button onclick="saveTestChanges()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Сохранить</button>
-                <button onclick="closeModal('editTestModal')" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Отмена</button>
+            <div id="resultsContent" class="space-y-4"></div>
+            <div class="mt-4 flex justify-end">
+                <button onclick="closeModal('detailedResultsModal')" class="bg-blue-500 text-white py-2 px-4 rounded-lg">Закрыть</button>
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = 'http://localhost:3000/api';
+        // Глобальные переменные
         let currentEditingTestId = null;
+        let currentEditingAccountId = null;
+        const apiUrl = 'http://localhost:3000/api'; // Обновите, если ваш сервер работает на другом порту
 
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        const tabLinks = document.querySelectorAll('.tab-link');
-        const tabContents = document.querySelectorAll('.tab-content');
-
-        tabLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const tabId = link.dataset.tab;
-                tabContents.forEach(content => content.classList.remove('active'));
-                tabLinks.forEach(tabLink => tabLink.classList.remove('bg-gray-700'));
-                document.getElementById(tabId).classList.add('active');
-                link.classList.add('bg-gray-700');
-                
-                // Load data based on the active tab
-                if (tabId === 'main-page-tab') loadNews();
-                if (tabId === 'upcoming-events-tab') loadEvents();
-                if (tabId === 'manage-staff-tab') loadEmployees();
-                if (tabId === 'certifications-tab') loadCertifications();
-                if (tabId === 'reporting-tab') loadReports();
-                if (tabId === 'info-tab') loadInfoBlocks();
-                if (tabId === 'tests-tab') loadTests();
-            });
-        });
-
-        // --- Функции для взаимодействия с API ---
-        
-        // Полное обнуление
-        async function resetDatabase() {
-            if (confirm('ВНИМАНИЕ: Вы уверены, что хотите полностью очистить базу данных? Это действие необратимо!')) {
-                try {
-                    const response = await fetch(`${API_URL}/reset`, { method: 'POST' });
-                    if (response.ok) {
-                        alert('База данных успешно очищена!');
-                        window.location.reload();
-                    } else {
-                        const error = await response.json();
-                        alert(`Ошибка: ${error.message}`);
-                    }
-                } catch (error) {
-                    console.error('Ошибка при сбросе базы данных:', error);
-                    alert('Ошибка: не удалось подключиться к серверу для сброса данных.');
+        // --- Утилиты ---
+        async function fetchData(endpoint) {
+            try {
+                const response = await fetch(`${apiUrl}${endpoint}`, {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!response.ok) {
+                    throw new Error(`Ошибка HTTP: ${response.status}`);
                 }
-            }
-        }
-        
-        // Новости
-        async function loadNews() {
-            try {
-                const response = await fetch(`${API_URL}/news`);
-                if (!response.ok) throw new Error('Ошибка сети при загрузке новостей.');
-                const news = await response.json();
-                const container = document.getElementById('news-list');
-                container.innerHTML = '';
-                news.forEach(item => {
-                    const newsItem = document.createElement('div');
-                    newsItem.className = 'bg-gray-800 p-4 rounded-lg mb-2 shadow-lg';
-                    newsItem.innerHTML = `
-                        <h3 class="text-xl font-bold text-white mb-2">${item.title}</h3>
-                        <p class="text-gray-300">${item.content}</p>
-                        <p class="text-gray-500 text-sm mt-4">
-                            ${item.authorRole} | ${new Date(item.dateCreated).toLocaleDateString('ru-RU')}
-                        </p>
-                    `;
-                    container.appendChild(newsItem);
-                });
+                return await response.json();
             } catch (error) {
-                console.error('Ошибка при загрузке новостей:', error);
-                alert('Не удалось загрузить новости. Проверьте, запущен ли сервер.');
+                console.error(`Ошибка при получении данных с ${endpoint}:`, error);
+                alert(`Не удалось получить данные. Проверьте, запущен ли сервер.`);
+                return null;
             }
         }
 
-        async function addNews() {
-            const title = document.getElementById('newsTitle').value;
-            const content = document.getElementById('newsContent').value;
-            const authorRole = document.getElementById('newsAuthorRole').value;
+        async function sendData(endpoint, method, data) {
             try {
-                const response = await fetch(`${API_URL}/news`, {
-                    method: 'POST',
+                const response = await fetch(`${apiUrl}${endpoint}`, {
+                    method: method,
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, content, authorRole })
+                    body: JSON.stringify(data)
                 });
-                if (response.ok) {
-                    alert('Новость успешно добавлена!');
-                    loadNews();
-                    closeModal('addNewsModal');
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Ошибка HTTP: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(`Ошибка при отправке данных на ${endpoint}:`, error);
+                alert(`Не удалось выполнить действие: ${error.message}`);
+                return null;
+            }
+        }
+
+        // --- Модальные окна ---
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // --- Навигация и Отображение Контента ---
+        let currentRole = null;
+        let currentUser = null;
+
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch(`${apiUrl}/status`);
+                const data = await response.json();
+                if (data.isLoggedIn) {
+                    currentUser = data.user;
+                    currentRole = currentUser.role;
+                    document.getElementById('userName').textContent = currentUser.nickname;
+                    document.getElementById('userRole').textContent = currentRole;
+                    document.querySelector('.sidebar').style.display = 'flex';
+                    document.querySelector('.main-content').style.display = 'block';
+                    setupPermissions(currentRole);
+                    showTab('dashboard');
                 } else {
-                    const error = await response.json();
-                    alert(`Ошибка при добавлении новости: ${error.message}`);
+                    window.location.href = 'index.html';
                 }
             } catch (error) {
-                console.error('Ошибка при добавлении новости:', error);
-                alert('Ошибка: не удалось подключиться к серверу.');
-            }
-        }
-        
-        // Сотрудники
-        async function loadEmployees() {
-            try {
-                const response = await fetch(`${API_URL}/employees`);
-                if (!response.ok) throw new Error('Ошибка сети при загрузке сотрудников.');
-                const employees = await response.json();
-                const tableBody = document.getElementById('employee-list');
-                tableBody.innerHTML = '';
-                employees.forEach(emp => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="py-2 px-4 border-b">${emp.nickname}</td>
-                        <td class="py-2 px-4 border-b">${emp.rank}</td>
-                        <td class="py-2 px-4 border-b">${emp.position || '-'}</td>
-                        <td class="py-2 px-4 border-b">${emp.warnings}</td>
-                        <td class="py-2 px-4 border-b">${emp.role || '-'}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Ошибка при загрузке сотрудников:', error);
-                alert('Не удалось загрузить сотрудников. Проверьте, запущен ли сервер.');
+                console.error('Ошибка при проверке статуса авторизации:', error);
+                window.location.href = 'index.html';
             }
         }
 
-        async function addEmployee() {
-            const nickname = document.getElementById('employeeNickname').value;
-            const rank = document.getElementById('employeeRank').value;
-            const position = document.getElementById('employeePosition').value;
-            const role = document.getElementById('employeeRole').value;
-            try {
-                const response = await fetch(`${API_URL}/employees`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nickname, rank, position, role })
-                });
-                if (response.ok) {
-                    alert('Сотрудник успешно добавлен!');
-                    loadEmployees();
-                    closeModal('addEmployeeModal');
-                } else {
-                    const error = await response.json();
-                    alert(`Ошибка: ${error.message}`);
-                }
-            } catch (error) {
-                console.error('Ошибка при добавлении:', error);
-                alert('Ошибка: не удалось подключиться к серверу.');
+        function logout() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                window.location.href = 'index.html';
             }
         }
 
-        // Строи
-        async function loadEvents() {
-            try {
-                const response = await fetch(`${API_URL}/events`);
-                if (!response.ok) throw new Error('Ошибка сети при загрузке строев.');
-                const events = await response.json();
-                const container = document.getElementById('upcoming-events');
-                container.innerHTML = '';
-                events.forEach(event => {
-                    const item = document.createElement('div');
-                    item.className = 'bg-gray-700 p-4 rounded-lg mb-2';
-                    item.innerHTML = `
-                        <p class="text-white">${event.title}</p>
-                        <p class="text-gray-400 text-sm">Создан: ${event.creatorNickname}</p>
-                        <p class="text-gray-400 text-sm">Дата: ${new Date(event.date).toLocaleString('ru-RU')}</p>
-                    `;
-                    container.appendChild(item);
+        function setupPermissions(role) {
+            const adminItems = ['manageStaffLink', 'manageCertificationsLink', 'manageParadesLink', 'manageCandidatesLink', 'orlsReportsLink', 'fullResetLink'];
+            const userItems = ['certificationLink', 'certificationResultsLink', 'reports'];
+            const orlsOrSeniorItems = ['orlsReportsLink', 'fullResetLink'];
+
+            document.querySelectorAll('.sidebar li').forEach(li => li.style.display = 'none');
+            document.querySelector('.sidebar a[onclick="showTab(\'dashboard\')"]').parentElement.style.display = 'block';
+            document.querySelector('.sidebar a[onclick="showTab(\'reports\')"]').parentElement.style.display = 'block';
+            document.querySelector('.sidebar a[onclick="logout()"]').parentElement.style.display = 'block';
+            document.getElementById('certificationLink').style.display = 'block';
+            document.getElementById('certificationResultsLink').style.display = 'block';
+
+            if (role === 'Начальник ОРЛС') {
+                adminItems.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) element.style.display = 'block';
                 });
-            } catch (error) {
-                console.error('Ошибка при загрузке строев:', error);
-                alert('Не удалось загрузить строи. Проверьте, запущен ли сервер.');
+                document.getElementById('orlsReportsLink').style.display = 'block';
+                document.getElementById('fullResetLink').style.display = 'block';
+            }
+            if (role === 'ГУ ГИБДД') {
+                adminItems.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) element.style.display = 'block';
+                });
             }
         }
 
-        async function addEvent() {
-            const title = document.getElementById('eventTitle').value;
-            const creatorNickname = document.getElementById('eventCreator').value;
-            try {
-                const response = await fetch(`${API_URL}/events`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, creatorNickname, date: new Date() })
-                });
-                if (response.ok) {
-                    alert('Строй успешно создан!');
-                    loadEvents();
-                    closeModal('addEventModal');
-                } else {
-                    const error = await response.json();
-                    alert(`Ошибка: ${error.message}`);
-                }
-            } catch (error) {
-                console.error('Ошибка при создании строя:', error);
-                alert('Ошибка: не удалось подключиться к серверу.');
-            }
-        }
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
 
-        // Аттестации
-        async function loadCertifications() {
-            try {
-                const response = await fetch(`${API_URL}/certifications`);
-                if (!response.ok) throw new Error('Ошибка сети при загрузке аттестаций.');
-                const certifications = await response.json();
-                const container = document.getElementById('certifications-list');
-                container.innerHTML = '';
-                certifications.forEach(cert => {
-                    const item = document.createElement('div');
-                    item.className = 'bg-gray-700 p-4 rounded-lg mb-2';
-                    item.innerHTML = `
-                        <p class="text-white">${cert.type === 'certification' ? 'Аттестация' : 'Переаттестация'} для ${cert.employeeNickname}</p>
-                        <p class="text-gray-400 text-sm">Проводил: ${cert.attesterNickname || '-'}</p>
-                        <p class="text-gray-400 text-sm">Дата: ${new Date(cert.date).toLocaleDateString('ru-RU')}</p>
-                        <p class="text-gray-400 text-sm">Статус: ${cert.status}</p>
-                        <p class="text-gray-400 text-sm">Доказательства: <a href="${cert.evidenceLink}" target="_blank" class="text-blue-400 hover:underline">ссылка</a></p>
-                    `;
-                    container.appendChild(item);
-                });
-            } catch (error) {
-                console.error('Ошибка при загрузке аттестаций:', error);
-                alert('Не удалось загрузить аттестации. Проверьте, запущен ли сервер.');
-            }
-        }
-
-        async function addCertification() {
-            const employeeNickname = document.getElementById('certEmployeeNickname').value;
-            const attesterNickname = document.getElementById('certAttesterNickname').value;
-            const attempt = document.getElementById('certAttempt').value;
-            const status = document.getElementById('certStatus').value;
-            const evidenceLink = document.getElementById('certEvidenceLink').value;
-            try {
-                const response = await fetch(`${API_URL}/certifications`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: 'certification', employeeNickname, attesterNickname, attempt: parseInt(attempt), status, evidenceLink, date: new Date() })
-                });
-                if (response.ok) {
-                    alert('Аттестация успешно добавлена!');
-                    loadCertifications();
-                    closeModal('addCertificationModal');
-                } else {
-                    const error = await response.json();
-                    alert(`Ошибка: ${error.message}`);
-                }
-            } catch (error) {
-                console.error('Ошибка при добавлении аттестации:', error);
-                alert('Ошибка: не удалось подключиться к серверу.');
-            }
-        }
-        
-        async function addRecertification() {
-            const employeeNickname = document.getElementById('recertEmployeeNickname').value;
-            const violation = document.getElementById('recertViolation').value;
-            const evidenceLink = document.getElementById('recertEvidenceLink').value;
-            try {
-                const response = await fetch(`${API_URL}/certifications`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: 'recertification', employeeNickname, violation, evidenceLink, status: 'Ожидает', date: new Date() })
-                });
-                if (response.ok) {
-                    alert('Переаттестация успешно добавлена!');
-                    loadCertifications();
-                    closeModal('addRecertificationModal');
-                } else {
-                    const error = await response.json();
-                    alert(`Ошибка: ${error.message}`);
-                }
-            } catch (error) {
-                console.error('Ошибка при добавлении переаттестации:', error);
-                alert('Ошибка: не удалось подключиться к серверу.');
-            }
-        }
-
-        async function filterCertifications() {
-            const nickname = document.getElementById('filter-nickname').value;
-            try {
-                const response = await fetch(`${API_URL}/certifications?nickname=${nickname}`);
-                if (!response.ok) throw new Error('Ошибка сети при фильтрации аттестаций.');
-                const certifications = await response.json();
-                const container = document.getElementById('certifications-list');
-                container.innerHTML = '';
-                certifications.forEach(cert => {
-                    const item = document.createElement('div');
-                    item.className = 'bg-gray-700 p-4 rounded-lg mb-2';
-                    item.innerHTML = `
-                        <p class="text-white">${cert.type === 'certification' ? 'Аттестация' : 'Переаттестация'} для ${cert.employeeNickname}</p>
-                        <p class="text-gray-400 text-sm">Проводил: ${cert.attesterNickname || '-'}</p>
-                        <p class="text-gray-400 text-sm">Дата: ${new Date(cert.date).toLocaleDateString('ru-RU')}</p>
-                        <p class="text-gray-400 text-sm">Статус: ${cert.status}</p>
-                        <p class="text-gray-400 text-sm">Доказательства: <a href="${cert.evidenceLink}" target="_blank" class="text-blue-400 hover:underline">ссылка</a></p>
-                    `;
-                    container.appendChild(item);
-                });
-            } catch (error) {
-                console.error('Ошибка при фильтрации аттестаций:', error);
-                alert('Не удалось отфильтровать аттестации. Проверьте, запущен ли сервер.');
-            }
-        }
-
-        // Отчеты
-        async function loadReports() {
-            try {
-                const response = await fetch(`${API_URL}/reports`);
-                if (!response.ok) throw new Error('Ошибка сети при загрузке отчетов.');
-                const reports = await response.json();
-                const container = document.getElementById('reports-list');
-                container.innerHTML = '';
-                reports.forEach(report => {
-                    const item = document.createElement('div');
-                    item.className = 'bg-gray-700 p-4 rounded-lg mb-2';
-                    item.innerHTML = `
-                        <p class="text-white">Отчет на ${report.reportType} от ${report.employeeNickname}</p>
-                        <p class="text-gray-400 text-sm">Статус: ${report.status}</p>
-                    `;
-                    container.appendChild(item);
-                });
-            } catch (error) {
-                console.error('Ошибка при загрузке отчетов:', error);
-                alert('Не удалось загрузить отчеты. Проверьте, запущен ли сервер.');
-            }
-        }
-
-        async function addReport() {
-            const employeeNickname = document.getElementById('reportEmployeeNickname').value;
-            const reportType = document.getElementById('reportType').value;
-            try {
-                const response = await fetch(`${API_URL}/reports`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ employeeNickname, reportType })
-                });
-                if (response.ok) {
-                    alert('Отчет успешно подан!');
-                    loadReports();
-                    closeModal('addReportModal');
-                } else {
-                    const error = await response.json();
-                    alert(`Ошибка: ${error.message}`);
-                }
-            } catch (error) {
-                console.error('Ошибка при подаче отчета:', error);
-                alert('Ошибка: не удалось подключиться к серверу.');
-            }
-        }
-
-        // Информационные блоки
-        async function loadInfoBlocks() {
-            try {
-                const response = await fetch(`${API_URL}/infoblocks`);
-                if (!response.ok) throw new Error('Ошибка сети при загрузке инфо-блоков.');
-                const infoBlocks = await response.json();
-                const container = document.getElementById('info-blocks-container');
-                container.innerHTML = '';
-                infoBlocks.forEach(block => {
-                    const item = document.createElement('div');
-                    item.className = 'bg-gray-700 p-4 rounded-lg mb-2';
-                    item.innerHTML = `
-                        <h3 class="text-xl font-bold text-white">${block.title}</h3>
-                        <p class="text-gray-300 mt-2">${block.content}</p>
-                        <p class="text-gray-500 text-sm mt-2">Добавил: ${block.authorRole}</p>
-                    `;
-                    container.appendChild(item);
-                });
-            } catch (error) {
-                console.error('Ошибка при загрузке инфо-блоков:', error);
-                alert('Не удалось загрузить инфо-блоки. Проверьте, запущен ли сервер.');
-            }
-        }
-
-        async function addInfoBlock() {
-            const title = document.getElementById('infoBlockTitle').value;
-            const content = document.getElementById('infoBlockContent').value;
-            const authorRole = document.getElementById('infoBlockAuthorRole').value;
-            try {
-                const response = await fetch(`${API_URL}/infoblocks`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, content, authorRole })
-                });
-                if (response.ok) {
-                    alert('Информационный блок успешно добавлен!');
-                    loadInfoBlocks();
-                    closeModal('addInfoBlockModal');
-                } else {
-                    const error = await response.json();
-                    alert(`Ошибка: ${error.message}`);
-                }
-            } catch (error) {
-                console.error('Ошибка при добавлении инфо-блока:', error);
-                alert('Ошибка: не удалось подключиться к серверу.');
-            }
-        }
-        
-        // Тесты
-        async function loadTests() {
-            try {
-                const response = await fetch(`${API_URL}/tests`);
-                if (!response.ok) throw new Error('Ошибка сети при загрузке тестов.');
-                const tests = await response.json();
-                const container = document.getElementById('tests-list');
-                container.innerHTML = '';
-                tests.forEach(test => {
-                    const item = document.createElement('div');
-                    item.className = 'bg-gray-700 p-4 rounded-lg mb-2 flex justify-between items-center';
-                    item.innerHTML = `
-                        <div>
-                            <h3 class="text-xl font-bold">${test.title}</h3>
-                            <p class="text-gray-400">${test.questions.length} вопросов</p>
-                        </div>
-                        <div class="space-x-2">
-                            <button onclick="editTest('${test._id}')" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded-lg"><i class="fas fa-edit"></i></button>
-                            <button onclick="deleteTest('${test._id}')" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-lg"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    `;
-                    container.appendChild(item);
-                });
-            } catch (error) {
-                console.error('Ошибка при загрузке тестов:', error);
-                alert('Не удалось загрузить тесты. Проверьте, запущен ли сервер.');
-            }
-        }
-
-        async function addTest() {
-            const title = document.getElementById('testTitle').value;
-            try {
-                const response = await fetch(`${API_URL}/tests`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, questions: [] })
-                });
-                if (response.ok) {
-                    alert('Тест успешно создан!');
+            // Загрузка данных для активной вкладки
+            switch (tabId) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'manage-staff':
+                    loadAccounts();
+                    break;
+                case 'manage-certifications':
                     loadTests();
-                    closeModal('addTestModal');
-                } else {
-                    const error = await response.json();
-                    alert(`Ошибка: ${error.message}`);
+                    break;
+                case 'manage-parades':
+                    loadParades();
+                    break;
+                case 'manage-candidates':
+                    loadCandidates();
+                    break;
+                case 'certification-results':
+                    loadCertificationResults();
+                    break;
+                case 'reports':
+                    loadMyReports();
+                    break;
+                case 'orls-reports':
+                    loadAllReports();
+                    break;
+                case 'certification':
+                    loadTraineeTests();
+                    break;
+            }
+        }
+
+        // --- Загрузка данных с сервера ---
+        async function loadDashboard() {
+            const data = await fetchData('/dashboard');
+            if (data) {
+                document.getElementById('totalAccounts').textContent = data.totalAccounts || 0;
+                document.getElementById('totalTests').textContent = data.totalTests || 0;
+                document.getElementById('completedCertifications').textContent = data.completedCertifications || 0;
+                renderUpcomingParades(data.upcomingParades);
+            }
+        }
+
+        async function loadAccounts() {
+            const data = await fetchData('/accounts');
+            if (data) {
+                renderAccounts(data.accounts);
+            }
+        }
+
+        async function loadTests() {
+            const data = await fetchData('/tests');
+            if (data) {
+                renderTests(data.tests);
+            }
+        }
+        
+        async function loadParades() {
+            const data = await fetchData('/parades');
+            if (data) {
+                renderParades(data.parades);
+            }
+        }
+
+        async function loadCandidates() {
+            const data = await fetchData('/candidates');
+            if (data) {
+                renderCandidates(data.candidates);
+            }
+        }
+        
+        async function loadCertificationResults() {
+            const data = await fetchData('/certification-results');
+            if (data) {
+                renderCertificationResults(data.results);
+            }
+        }
+        
+        async function loadMyReports() {
+            const data = await fetchData(`/reports/${currentUser.id}`);
+            if (data) {
+                renderMyReports(data.reports);
+            }
+        }
+
+        async function loadAllReports() {
+            const data = await fetchData('/reports');
+            if (data) {
+                renderAllReports(data.reports);
+            }
+        }
+        
+        async function loadTraineeTests() {
+            const data = await fetchData(`/trainee-tests/${currentUser.id}`);
+            if (data) {
+                renderTraineeTests(data.tests);
+            }
+        }
+
+        // --- Рендеринг контента ---
+        function renderUpcomingParades(parades) {
+            const list = document.getElementById('upcomingParadesList');
+            list.innerHTML = '';
+            parades.forEach(parade => {
+                const li = document.createElement('li');
+                li.className = 'py-3';
+                li.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">${parade.department}</p>
+                            <p class="text-sm text-gray-500">Время: ${parade.paradeTime}</p>
+                            <p class="text-sm text-gray-500">Текст: ${parade.paradeText}</p>
+                        </div>
+                    </div>`;
+                list.appendChild(li);
+            });
+        }
+
+        function renderAccounts(accounts) {
+            const tableBody = document.getElementById('accountsTableBody');
+            tableBody.innerHTML = '';
+            const positionFilter = document.getElementById('position-filter');
+            const roles = [...new Set(accounts.map(acc => acc.role))];
+            positionFilter.innerHTML = '<option value="all">Все должности</option>';
+            roles.forEach(role => {
+                const option = document.createElement('option');
+                option.value = role;
+                option.textContent = role;
+                positionFilter.appendChild(option);
+            });
+            accounts.forEach(account => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2 px-4 border-b">${account.id}</td>
+                    <td class="py-2 px-4 border-b">${account.nickname}</td>
+                    <td class="py-2 px-4 border-b">${account.role}</td>
+                    <td class="py-2 px-4 border-b">${new Date(account.last_active).toLocaleString()}</td>
+                    <td class="py-2 px-4 border-b">
+                        <button onclick="editAccount(${account.id})" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Редактировать</button>
+                    </td>`;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function renderTests(tests) {
+            const list = document.getElementById('testsList');
+            list.innerHTML = '';
+            tests.forEach(test => {
+                const li = document.createElement('li');
+                li.className = 'py-4 flex justify-between items-center';
+                li.innerHTML = `
+                    <div>
+                        <p class="text-lg font-bold">${test.name}</p>
+                        <p class="text-sm text-gray-600">${test.description}</p>
+                    </div>
+                    <div>
+                        <button onclick="editTest(${test.id})" class="bg-blue-500 text-white px-3 py-1 rounded text-sm mr-2">Редактировать</button>
+                        <button onclick="deleteTest(${test.id})" class="bg-red-500 text-white px-3 py-1 rounded text-sm">Удалить</button>
+                    </div>`;
+                list.appendChild(li);
+            });
+        }
+
+        function renderParades(parades) {
+            const list = document.getElementById('paradesList');
+            list.innerHTML = '';
+            parades.forEach(parade => {
+                const li = document.createElement('li');
+                li.className = 'py-4 flex justify-between items-center';
+                li.innerHTML = `
+                    <div>
+                        <p class="text-lg font-bold">Подразделение: ${parade.department}</p>
+                        <p class="text-sm text-gray-600">Время: ${parade.paradeTime}</p>
+                        <p class="text-sm text-gray-600">Текст: ${parade.paradeText}</p>
+                    </div>
+                    <div>
+                        <button onclick="deleteParade(${parade.id})" class="bg-red-500 text-white px-3 py-1 rounded text-sm">Удалить</button>
+                    </div>`;
+                list.appendChild(li);
+            });
+        }
+
+        function renderCandidates(candidates) {
+            const list = document.getElementById('candidatesList');
+            list.innerHTML = '';
+            candidates.forEach(candidate => {
+                const li = document.createElement('li');
+                li.className = 'py-4 flex justify-between items-center';
+                li.innerHTML = `
+                    <div>
+                        <p class="text-lg font-bold">${candidate.nickname}</p>
+                        <p class="text-sm text-gray-600">ID: ${candidate.id}</p>
+                    </div>
+                    <div>
+                        <button onclick="approveCandidate(${candidate.id})" class="bg-green-500 text-white px-3 py-1 rounded text-sm mr-2">Одобрить</button>
+                        <button onclick="rejectCandidate(${candidate.id})" class="bg-red-500 text-white px-3 py-1 rounded text-sm">Отклонить</button>
+                    </div>`;
+                list.appendChild(li);
+            });
+        }
+
+        function renderCertificationResults(results) {
+            const tableBody = document.getElementById('resultsTableBody');
+            tableBody.innerHTML = '';
+            results.forEach(result => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2 px-4 border-b">${result.nickname}</td>
+                    <td class="py-2 px-4 border-b">${result.testName}</td>
+                    <td class="py-2 px-4 border-b">${new Date(result.date).toLocaleString()}</td>
+                    <td class="py-2 px-4 border-b">${result.result}</td>
+                    <td class="py-2 px-4 border-b">
+                        <button onclick="showDetailedResults(${result.id})" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Показать</button>
+                    </td>`;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function renderMyReports(reports) {
+            const reportsList = document.getElementById('myReportsList');
+            reportsList.innerHTML = '';
+            reports.filter(r => r.type === 'report').forEach(report => {
+                const li = document.createElement('li');
+                li.className = 'py-4';
+                li.innerHTML = `<p class="text-lg font-bold">${report.subject}</p><p class="text-sm text-gray-600">${report.text}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(report.date).toLocaleString()}</p>`;
+                reportsList.appendChild(li);
+            });
+
+            const inactivesList = document.getElementById('myInactivesList');
+            inactivesList.innerHTML = '';
+            reports.filter(r => r.type === 'inactive').forEach(inactive => {
+                const li = document.createElement('li');
+                li.className = 'py-4';
+                li.innerHTML = `<p class="text-lg font-bold">Неактив: ${inactive.startDate} по ${inactive.endDate}</p><p class="text-sm text-gray-600">Причина: ${inactive.reason}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(inactive.date).toLocaleString()}</p>`;
+                inactivesList.appendChild(li);
+            });
+        }
+
+        function renderAllReports(reports) {
+            const reportsList = document.getElementById('allReportsList');
+            reportsList.innerHTML = '';
+            reports.filter(r => r.type === 'report').forEach(report => {
+                const li = document.createElement('li');
+                li.className = 'py-4';
+                li.innerHTML = `<p class="text-lg font-bold">${report.subject} от ${report.nickname}</p><p class="text-sm text-gray-600">${report.text}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(report.date).toLocaleString()}</p>`;
+                reportsList.appendChild(li);
+            });
+
+            const inactivesList = document.getElementById('allInactivesList');
+            inactivesList.innerHTML = '';
+            reports.filter(r => r.type === 'inactive').forEach(inactive => {
+                const li = document.createElement('li');
+                li.className = 'py-4';
+                li.innerHTML = `<p class="text-lg font-bold">Неактив: ${inactive.startDate} по ${inactive.endDate} от ${inactive.nickname}</p><p class="text-sm text-gray-600">Причина: ${inactive.reason}</p><p class="text-xs text-gray-400">Отправлено: ${new Date(inactive.date).toLocaleString()}</p>`;
+                inactivesList.appendChild(li);
+            });
+        }
+
+        function renderTraineeTests(tests) {
+            const list = document.getElementById('traineeTestsList');
+            list.innerHTML = '';
+            tests.forEach(test => {
+                const li = document.createElement('li');
+                li.className = 'py-4 flex justify-between items-center';
+                li.innerHTML = `
+                    <div>
+                        <p class="text-lg font-bold">${test.testName}</p>
+                        <p class="text-sm text-gray-600">Время на прохождение: ${test.timeLimit} минут</p>
+                    </div>
+                    <div>
+                        <button onclick="startTest(${test.id})" class="bg-green-500 text-white px-3 py-1 rounded text-sm">Начать</button>
+                    </div>`;
+                list.appendChild(li);
+            });
+        }
+
+        // --- Обработчики форм и действий ---
+        async function addAccount(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                nickname: form.nickname.value,
+                role: form.role.value,
+                auth_code: form.auth_code.value,
+                special_code: form.special_code.value
+            };
+            const result = await sendData('/accounts', 'POST', data);
+            if (result) {
+                closeModal('addAccountModal');
+                loadAccounts();
+            }
+        }
+
+        async function editAccount(id) {
+            currentEditingAccountId = id;
+            const account = await fetchData(`/accounts/${id}`);
+            if (account) {
+                document.getElementById('editAccountId').value = account.id;
+                document.getElementById('editAccountNickname').value = account.nickname;
+                document.getElementById('editAccountCode').value = account.auth_code;
+                document.getElementById('editSpecialCode').value = account.special_code;
+                openModal('editAccountModal');
+            }
+        }
+
+        async function saveAccountChanges(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                nickname: form.nickname.value,
+                role: form.role.value,
+                auth_code: form.auth_code.value,
+                special_code: form.special_code.value
+            };
+            const result = await sendData(`/accounts/${currentEditingAccountId}`, 'PUT', data);
+            if (result) {
+                closeModal('editAccountModal');
+                loadAccounts();
+            }
+        }
+
+        async function proposeCandidate() {
+            if (confirm('Выдвинуть этого сотрудника в кандидаты на начальника?')) {
+                const result = await sendData(`/candidates`, 'POST', { accountId: currentEditingAccountId });
+                if (result) {
+                    closeModal('editAccountModal');
+                    alert('Сотрудник успешно выдвинут в кандидаты.');
                 }
-            } catch (error) {
-                console.error('Ошибка при создании теста:', error);
-                alert('Ошибка: не удалось подключиться к серверу.');
+            }
+        }
+
+        async function approveCandidate(accountId) {
+            if (confirm('Вы уверены, что хотите одобрить этого кандидата?')) {
+                const result = await sendData(`/candidates/${accountId}/approve`, 'POST', {});
+                if (result) {
+                    loadCandidates();
+                    alert('Кандидат успешно одобрен и повышен.');
+                }
+            }
+        }
+
+        async function rejectCandidate(accountId) {
+            if (confirm('Вы уверены, что хотите отклонить этого кандидата?')) {
+                const result = await sendData(`/candidates/${accountId}/reject`, 'POST', {});
+                if (result) {
+                    loadCandidates();
+                    alert('Кандидат отклонен.');
+                }
+            }
+        }
+
+        async function addTest(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                name: form.testName.value,
+                description: form.description.value,
+                questions: []
+            };
+            const result = await sendData('/tests', 'POST', data);
+            if (result) {
+                closeModal('addTestModal');
+                loadTests();
+                alert('Новый тест успешно добавлен!');
             }
         }
 
         async function editTest(testId) {
             currentEditingTestId = testId;
-            openModal('editTestModal');
-            try {
-                const response = await fetch(`${API_URL}/tests/${testId}`);
-                if (!response.ok) throw new Error('Ошибка сети при загрузке теста для редактирования.');
-                const test = await response.json();
-                document.getElementById('editTestTitle').value = test.title;
-                const container = document.getElementById('questions-container');
+            const test = await fetchData(`/tests/${testId}`);
+            if (test) {
+                document.getElementById('editTestName').textContent = test.name;
+                const container = document.getElementById('questionsContainer');
                 container.innerHTML = '';
-                test.questions.forEach((q) => {
-                    addQuestionItem(q, container);
+                test.questions.forEach((q, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'question-item';
+                    div.dataset.id = q.id;
+                    div.innerHTML = `
+                        <div class="mb-2">
+                            <label class="block text-gray-700">Вопрос:</label>
+                            <input type="text" data-field="text" value="${q.text}" class="shadow border rounded w-full py-2 px-3">
+                        </div>
+                        <div class="mb-2">
+                            <label class="block text-gray-700">Варианты ответов (через запятую):</label>
+                            <input type="text" data-field="options" value="${q.options.join(', ')}" class="shadow border rounded w-full py-2 px-3">
+                        </div>
+                        <div class="mb-2">
+                            <label class="block text-gray-700">Правильный ответ:</label>
+                            <input type="text" data-field="answer" value="${q.answer}" class="shadow border rounded w-full py-2 px-3">
+                        </div>
+                        <button onclick="deleteQuestion(${q.id})" class="bg-red-500 text-white py-1 px-2 rounded text-sm">Удалить вопрос</button>
+                    `;
+                    container.appendChild(div);
                 });
-            } catch (error) {
-                console.error('Ошибка при загрузке теста для редактирования:', error);
-                closeModal('editTestModal');
+                openModal('editTestModal');
             }
         }
 
-        function addQuestionItem(question = { text: '', options: ['', '', '', ''], answer: '' }, container = document.getElementById('questions-container')) {
-            const item = document.createElement('div');
-            item.className = 'question-item bg-gray-700 rounded-lg p-4 mb-4';
-            item.innerHTML = `
+        function addQuestion() {
+            const container = document.getElementById('questionsContainer');
+            const newId = Date.now();
+            const div = document.createElement('div');
+            div.className = 'question-item';
+            div.dataset.id = newId;
+            div.innerHTML = `
                 <div class="mb-2">
-                    <label class="block text-sm font-bold mb-1">Вопрос:</label>
-                    <input type="text" value="${question.text}" class="w-full bg-gray-600 text-white p-2 rounded-lg" data-field="text">
+                    <label class="block text-gray-700">Вопрос:</label>
+                    <input type="text" data-field="text" value="" class="shadow border rounded w-full py-2 px-3">
                 </div>
                 <div class="mb-2">
-                    <label class="block text-sm font-bold mb-1">Варианты ответов:</label>
-                    <input type="text" value="${question.options[0] || ''}" placeholder="Вариант 1" class="w-full bg-gray-600 text-white p-2 rounded-lg mb-1" data-field="option">
-                    <input type="text" value="${question.options[1] || ''}" placeholder="Вариант 2" class="w-full bg-gray-600 text-white p-2 rounded-lg mb-1" data-field="option">
-                    <input type="text" value="${question.options[2] || ''}" placeholder="Вариант 3" class="w-full bg-gray-600 text-white p-2 rounded-lg mb-1" data-field="option">
-                    <input type="text" value="${question.options[3] || ''}" placeholder="Вариант 4" class="w-full bg-gray-600 text-white p-2 rounded-lg" data-field="option">
+                    <label class="block text-gray-700">Варианты ответов (через запятую):</label>
+                    <input type="text" data-field="options" value="" class="shadow border rounded w-full py-2 px-3">
                 </div>
                 <div class="mb-2">
-                    <label class="block text-sm font-bold mb-1">Правильный ответ:</label>
-                    <input type="text" value="${question.answer}" placeholder="Правильный ответ" class="w-full bg-gray-600 text-white p-2 rounded-lg" data-field="answer">
+                    <label class="block text-gray-700">Правильный ответ:</label>
+                    <input type="text" data-field="answer" value="" class="shadow border rounded w-full py-2 px-3">
                 </div>
-                <button onclick="removeQuestionItem(this)" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-2 rounded-lg">Удалить вопрос</button>
+                <button onclick="deleteQuestion(${newId})" class="bg-red-500 text-white py-1 px-2 rounded text-sm">Удалить вопрос</button>
             `;
-            container.appendChild(item);
-        }
-        
-        function addQuestionToEditModal() {
-            addQuestionItem();
-        }
-
-        function removeQuestionItem(button) {
-            button.parentElement.remove();
+            container.appendChild(div);
         }
 
         async function saveTestChanges() {
-            const title = document.getElementById('editTestTitle').value;
-            const questionsContainer = document.getElementById('questions-container');
-            const questionItems = questionsContainer.querySelectorAll('.question-item');
             const questions = [];
-            questionItems.forEach(item => {
-                const text = item.querySelector('[data-field="text"]').value;
-                const answer = item.querySelector('[data-field="answer"]').value;
-                const options = Array.from(item.querySelectorAll('[data-field="option"]')).map(input => input.value).filter(val => val);
-                if (text && answer) {
-                    questions.push({ text, options, answer });
-                }
-            });
-
-            try {
-                const response = await fetch(`${API_URL}/tests/${currentEditingTestId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, questions })
+            document.querySelectorAll('#questionsContainer .question-item').forEach(item => {
+                questions.push({
+                    id: parseInt(item.dataset.id),
+                    text: item.querySelector('[data-field="text"]').value,
+                    options: item.querySelector('[data-field="options"]').value.split(',').map(o => o.trim()),
+                    answer: item.querySelector('[data-field="answer"]').value
                 });
+            });
+            const result = await sendData(`/tests/${currentEditingTestId}`, 'PUT', { questions });
+            if (result) {
+                closeModal('editTestModal');
+                loadTests();
+                alert('Изменения в тесте сохранены.');
+            }
+        }
 
-                if (response.ok) {
-                    alert('Тест успешно обновлен!');
-                    loadTests();
-                    closeModal('editTestModal');
-                } else {
-                    const error = await response.json();
-                    alert(`Ошибка: ${error.message}`);
+        async function deleteQuestion(questionId) {
+            if (confirm('Вы уверены, что хотите удалить этот вопрос?')) {
+                const result = await sendData(`/tests/${currentEditingTestId}/questions/${questionId}`, 'DELETE', {});
+                if (result) {
+                    editTest(currentEditingTestId);
                 }
-            } catch (error) {
-                console.error('Ошибка при сохранении теста:', error);
             }
         }
 
         async function deleteTest(testId) {
             if (confirm('Вы уверены, что хотите удалить этот тест?')) {
-                try {
-                    const response = await fetch(`${API_URL}/tests/${testId}`, { method: 'DELETE' });
-                    if (response.ok) {
-                        alert('Тест успешно удален!');
-                        loadTests();
-                    } else {
-                        const error = await response.json();
-                        alert(`Ошибка: ${error.message}`);
-                    }
-                } catch (error) {
-                    console.error('Ошибка при удалении теста:', error);
+                const result = await sendData(`/tests/${testId}`, 'DELETE', {});
+                if (result) {
+                    loadTests();
+                    alert('Тест успешно удален.');
                 }
             }
         }
 
-        // Загрузка данных при инициализации
+        async function assignTest(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                accountId: document.getElementById('assignTestAccountId').value,
+                testId: form.assignTestSelect.value,
+                timeLimit: form.testTimeInput.value
+            };
+            const result = await sendData('/assign-test', 'POST', data);
+            if (result) {
+                closeModal('assignTestModal');
+                alert('Аттестация успешно назначена!');
+            }
+        }
+
+        async function showDetailedResults(resultId) {
+            const result = await fetchData(`/certification-results/${resultId}`);
+            if (result) {
+                const content = document.getElementById('resultsContent');
+                content.innerHTML = `
+                    <p><strong>Сотрудник:</strong> ${result.nickname}</p>
+                    <p><strong>Тест:</strong> ${result.testName}</p>
+                    <p><strong>Дата:</strong> ${new Date(result.date).toLocaleString()}</p>
+                    <p><strong>Результат:</strong> ${result.score}</p>
+                    <h4>Ответы:</h4>
+                    <ul class="list-disc ml-6">
+                        ${result.answers.map(a => `
+                            <li class="${a.isCorrect ? 'text-green-600' : 'text-red-600'}">
+                                <strong>Вопрос:</strong> ${a.question} <br>
+                                <strong>Ваш ответ:</strong> ${a.userAnswer} <br>
+                                <strong>Правильный ответ:</strong> ${a.correctAnswer}
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                openModal('detailedResultsModal');
+            }
+        }
+
+        async function addParade(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                department: form.department.value,
+                paradeTime: form.paradeTime.value,
+                paradeText: form.paradeText.value
+            };
+            const result = await sendData('/parades', 'POST', data);
+            if (result) {
+                closeModal('addParadeModal');
+                loadParades();
+            }
+        }
+        
+        async function deleteParade(paradeId) {
+            if (confirm('Вы уверены, что хотите удалить этот строй?')) {
+                const result = await sendData(`/parades/${paradeId}`, 'DELETE', {});
+                if (result) {
+                    loadParades();
+                }
+            }
+        }
+
+        async function submitReport(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                type: 'report',
+                userId: currentUser.id,
+                subject: form.reportSubject.value,
+                text: form.reportText.value
+            };
+            const result = await sendData('/reports', 'POST', data);
+            if (result) {
+                closeModal('reportModal');
+                loadMyReports();
+            }
+        }
+
+        async function submitInactive(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                type: 'inactive',
+                userId: currentUser.id,
+                startDate: form.startDate.value,
+                endDate: form.endDate.value,
+                reason: form.reason.value
+            };
+            const result = await sendData('/reports', 'POST', data);
+            if (result) {
+                closeModal('inactiveModal');
+                loadMyReports();
+            }
+        }
+
+        async function performFullReset() {
+            if (confirm('Это действие необратимо! Вы действительно хотите полностью обнулить все данные?')) {
+                const result = await sendData('/full-reset', 'POST', {});
+                if (result) {
+                    alert('Все данные успешно обнулены.');
+                    window.location.reload();
+                }
+            }
+        }
+
+        // --- Инициализация ---
         window.onload = function() {
-            // Активируем вкладку "Главная" при загрузке страницы
-            document.getElementById('main-page-tab').classList.add('active');
-            document.querySelector('[data-tab="main-page-tab"]').classList.add('bg-gray-700');
-            loadNews();
+            checkLoginStatus();
         };
+
+        // Привязка обработчиков форм
+        document.getElementById('addAccountForm').onsubmit = addAccount;
+        document.getElementById('editAccountForm').onsubmit = saveAccountChanges;
+        document.getElementById('assignTestForm').onsubmit = assignTest;
+        document.getElementById('addTestForm').onsubmit = addTest;
+        document.getElementById('addParadeForm').onsubmit = addParade;
+        document.getElementById('reportForm').onsubmit = submitReport;
+        document.getElementById('inactiveForm').onsubmit = submitInactive;
+
     </script>
 </body>
 </html>
