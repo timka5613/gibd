@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сформировать Отчеты</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключение Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            transition: all 0.3s ease-in-out;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            .sidebar:hover {
+                width: 250px;
+            }
+            .sidebar .nav-text {
+                display: none;
+            }
+            .sidebar:hover .nav-text {
+                display: inline;
+            }
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex font-sans text-gray-800">
+
+    <!-- Боковое навигационное меню -->
+    <aside class="sidebar bg-gray-900 text-white p-6 shadow-lg rounded-r-2xl">
+        <div class="flex items-center mb-8">
+            <i class="fas fa-traffic-light text-3xl text-yellow-500 mr-3"></i>
+            <h1 class="text-2xl font-bold nav-text">ГИБДД ОРЛС</h1>
+        </div>
+        <nav>
+            <ul class="space-y-4">
+                <li data-role="all">
+                    <a href="main.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-home text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Главная</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="employee_management.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-users text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление сотрудниками</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="formations.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-chess-knight text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление строями</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="candidates.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-user-tie text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Кандидаты в начальники</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="orls_reports.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-file-invoice text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Отчетность ОРЛС</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="orls_reports_form.html" class="flex items-center py-3 px-4 rounded-lg bg-gray-700">
+                        <i class="fas fa-chart-line text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Сформировка отчетов</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="tools.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-toolbox text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Управление инструментами</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="attestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-clipboard-check text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Прохождение аттестации</span>
+                    </a>
+                </li>
+                <li data-role="senior_instructor">
+                    <a href="attestation_results.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-poll text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Результаты аттестации</span>
+                    </a>
+                </li>
+                <li data-role="deputy_head">
+                    <a href="attestation_reset.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-undo-alt text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Обнуление аттестации</span>
+                    </a>
+                </li>
+                 <li data-role="all">
+                    <a href="reattestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-sync-alt text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Переаттестации</span>
+                    </a>
+                </li>
+                 <li data-role="all">
+                    <a href="add_attestation.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-plus-circle text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Аттестации</span>
+                    </a>
+                </li>
+                <li data-role="all">
+                    <a href="information_department.html" class="flex items-center py-3 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-700">
+                        <i class="fas fa-info-circle text-xl mr-4"></i>
+                        <span class="font-semibold nav-text">Информационный отдел</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Основное содержимое панели -->
+    <main class="main-content flex-grow p-8">
+        <div class="container mx-auto">
+            <div id="accessDenied" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl relative text-center">
+                <span class="block sm:inline">У вас нет доступа к этой странице.</span>
+            </div>
+            <div id="content" class="bg-white rounded-3xl shadow-lg p-8 hidden">
+                <h2 class="text-4xl font-bold text-gray-900 mb-6">Сформировка отчетов</h2>
+                
+                <!-- Tabs -->
+                <div class="flex border-b border-gray-200 mb-8">
+                    <button id="generalTabBtn" class="py-2 px-4 text-center text-sm font-medium focus:outline-none transition-colors duration-200 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 active-tab-btn" data-tab="general">
+                        Общий отчет
+                    </button>
+                    <button id="individualTabBtn" class="py-2 px-4 text-center text-sm font-medium focus:outline-none transition-colors duration-200 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="individual">
+                        Отчет по сотруднику
+                    </button>
+                </div>
+
+                <!-- General Report Tab Content -->
+                <div id="generalTabContent" class="tab-content active">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Сформировать сводный отчет</h3>
+                    <div class="flex items-center space-x-4 mb-6">
+                        <label for="generalPeriod" class="text-sm font-medium text-gray-700">Период:</label>
+                        <select id="generalPeriod" class="rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg">
+                            <option value="day">За день</option>
+                            <option value="week" selected>За неделю</option>
+                            <option value="month">За месяц</option>
+                        </select>
+                        <button id="generateGeneralReportBtn" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-lg">
+                            Сформировать
+                        </button>
+                    </div>
+                    <div id="generalReportOutput" class="bg-gray-50 p-6 rounded-lg shadow-inner">
+                        <p class="text-gray-500 text-sm">Здесь будет отображен сводный отчет.</p>
+                    </div>
+                </div>
+
+                <!-- Individual Report Tab Content -->
+                <div id="individualTabContent" class="tab-content">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Сформировать отчет по сотруднику</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label for="employeeSelect" class="block text-sm font-medium text-gray-700">Выберите сотрудника:</label>
+                            <select id="employeeSelect" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg">
+                                <!-- Опции будут добавлены динамически -->
+                            </select>
+                        </div>
+                        <div>
+                            <label for="individualPeriod" class="block text-sm font-medium text-gray-700">Период:</label>
+                            <select id="individualPeriod" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 rounded-lg">
+                                <option value="day">За день</option>
+                                <option value="week" selected>За неделю</option>
+                                <option value="month">За месяц</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-right mb-6">
+                        <button id="generateIndividualReportBtn" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-lg">
+                            Сформировать
+                        </button>
+                    </div>
+                    <div id="individualReportOutput" class="bg-gray-50 p-6 rounded-lg shadow-inner">
+                        <p class="text-gray-500 text-sm">Здесь будет отображен отчет по выбранному сотруднику.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, onSnapshot, collection, query, where, getDocs, setLogLevel, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // setLogLevel('debug');
+        
+        // Глобальные переменные Canvas
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const authToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        let db, auth;
+        let userRole = 'all';
+        let allReports = [];
+        let allUsers = [];
+
+        function showMessage(message, isError = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `p-4 mb-4 rounded-xl text-sm ${isError ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`;
+            messageDiv.textContent = message;
+            document.getElementById('content').prepend(messageDiv);
+            setTimeout(() => messageDiv.remove(), 5000);
+        }
+
+        function checkAccess(role) {
+            const accessDenied = document.getElementById('accessDenied');
+            const content = document.getElementById('content');
+            if (role === 'deputy_head' || role === 'head') {
+                content.classList.remove('hidden');
+                accessDenied.classList.add('hidden');
+                setupListeners();
+            } else {
+                content.classList.add('hidden');
+                accessDenied.classList.remove('hidden');
+            }
+        }
+
+        function setupTabSwitching() {
+            const tabs = document.querySelectorAll('[data-tab]');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.getElementById(tab.dataset.tab + 'TabContent').classList.add('active');
+                    tabs.forEach(t => t.classList.remove('border-indigo-500', 'text-indigo-600', 'hover:border-indigo-300'));
+                    tab.classList.add('border-indigo-500', 'text-indigo-600');
+                });
+            });
+            document.getElementById('generalTabBtn').click();
+        }
+
+        function getStartOfPeriod(period) {
+            const now = new Date();
+            let start = new Date(now);
+            start.setHours(0, 0, 0, 0);
+
+            switch (period) {
+                case 'day':
+                    break;
+                case 'week':
+                    const day = now.getDay();
+                    const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Понедельник как начало недели
+                    start.setDate(diff);
+                    break;
+                case 'month':
+                    start.setDate(1);
+                    break;
+            }
+            return start.getTime();
+        }
+
+        function filterReports(reports, period, userId = null) {
+            const periodStart = getStartOfPeriod(period);
+            return reports.filter(report => {
+                const reportTime = report.submittedAt;
+                const isWithinPeriod = reportTime >= periodStart;
+                const isCorrectUser = userId ? report.userId === userId : true;
+                return isWithinPeriod && isCorrectUser;
+            });
+        }
+
+        function renderGeneralReport(reports, outputElement) {
+            if (reports.length === 0) {
+                outputElement.innerHTML = `<p class="text-gray-500">Отчетов за выбранный период не найдено.</p>`;
+                return;
+            }
+
+            const totalInterviews = reports.reduce((sum, report) => sum + report.interviews, 0);
+            const totalAttestations = reports.reduce((sum, report) => sum + report.attestations, 0);
+
+            const userStats = reports.reduce((stats, report) => {
+                const username = report.username;
+                if (!stats[username]) {
+                    stats[username] = { interviews: 0, attestations: 0 };
+                }
+                stats[username].interviews += report.interviews;
+                stats[username].attestations += report.attestations;
+                return stats;
+            }, {});
+
+            let html = `
+                <div class="mb-6">
+                    <h4 class="text-xl font-semibold mb-2">Сводная статистика</h4>
+                    <p>Всего проведено собеседований: <span class="font-bold">${totalInterviews}</span></p>
+                    <p>Всего проведено аттестаций: <span class="font-bold">${totalAttestations}</span></p>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold mb-2">Детализация по сотрудникам</h4>
+                    <ul class="space-y-4">
+            `;
+            
+            for (const [username, stats] of Object.entries(userStats)) {
+                html += `
+                    <li class="p-4 bg-white rounded-lg shadow">
+                        <p class="font-medium text-lg">${username}</p>
+                        <p class="text-sm text-gray-600">Собеседований: ${stats.interviews}</p>
+                        <p class="text-sm text-gray-600">Аттестаций: ${stats.attestations}</p>
+                    </li>
+                `;
+            }
+
+            html += `</ul></div>`;
+            outputElement.innerHTML = html;
+        }
+
+        function renderIndividualReport(reports, outputElement) {
+            if (reports.length === 0) {
+                outputElement.innerHTML = `<p class="text-gray-500">Отчетов для данного сотрудника за выбранный период не найдено.</p>`;
+                return;
+            }
+
+            let html = `<ul class="space-y-4">`;
+            reports.forEach(report => {
+                const reportDate = new Date(report.submittedAt).toLocaleDateString();
+                html += `
+                    <li class="p-4 bg-white rounded-lg shadow">
+                        <p class="font-medium text-lg">Отчет от ${reportDate}</p>
+                        <p class="text-sm text-gray-600">Системный ранг: ${report.rank}</p>
+                        <p class="text-sm text-gray-600">Собеседований: ${report.interviews}</p>
+                        <p class="text-sm text-gray-600">Аттестаций: ${report.attestations}</p>
+                        <p class="text-sm text-gray-600">Задачи: ${report.tasks}</p>
+                    </li>
+                `;
+            });
+            html += `</ul>`;
+            outputElement.innerHTML = html;
+        }
+
+        function setupAppEventHandlers() {
+            document.getElementById('generateGeneralReportBtn').addEventListener('click', () => {
+                const period = document.getElementById('generalPeriod').value;
+                const filteredReports = filterReports(allReports, period);
+                const outputElement = document.getElementById('generalReportOutput');
+                renderGeneralReport(filteredReports, outputElement);
+            });
+
+            document.getElementById('generateIndividualReportBtn').addEventListener('click', () => {
+                const userId = document.getElementById('employeeSelect').value;
+                const period = document.getElementById('individualPeriod').value;
+                if (!userId) {
+                    showMessage('Выберите сотрудника.', true);
+                    return;
+                }
+                const filteredReports = filterReports(allReports, period, userId);
+                const outputElement = document.getElementById('individualReportOutput');
+                renderIndividualReport(filteredReports, outputElement);
+            });
+        }
+        
+        function populateEmployeeSelect() {
+            const selectElement = document.getElementById('employeeSelect');
+            selectElement.innerHTML = '<option value="">Выберите сотрудника</option>';
+            allUsers.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.userId;
+                option.textContent = user.username || `Пользователь ${user.userId.substring(0, 8)}`;
+                selectElement.appendChild(option);
+            });
+        }
+
+        function setupListeners() {
+            if (!db) return;
+
+            // Listen for reports
+            const reportsCollection = collection(db, `artifacts/${appId}/public/data/reports`);
+            onSnapshot(reportsCollection, (snapshot) => {
+                allReports = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // Re-run the last generated report to keep it fresh
+                const generalPeriod = document.getElementById('generalPeriod').value;
+                const individualUserId = document.getElementById('employeeSelect').value;
+                const individualPeriod = document.getElementById('individualPeriod').value;
+                renderGeneralReport(filterReports(allReports, generalPeriod), document.getElementById('generalReportOutput'));
+                if (individualUserId) {
+                    renderIndividualReport(filterReports(allReports, individualPeriod, individualUserId), document.getElementById('individualReportOutput'));
+                }
+            }, (error) => {
+                console.error("Ошибка при получении отчетов:", error);
+                showMessage("Ошибка при получении данных отчетов.", true);
+            });
+
+            // Listen for users
+            const usersCollection = collection(db, `artifacts/${appId}/public/data/users`);
+            onSnapshot(usersCollection, (snapshot) => {
+                allUsers = snapshot.docs.map(doc => ({ userId: doc.id, ...doc.data() }));
+                populateEmployeeSelect();
+            }, (error) => {
+                console.error("Ошибка при получении пользователей:", error);
+                showMessage("Ошибка при получении данных пользователей.", true);
+            });
+        }
+
+        async function initializeAppAndListeners() {
+            if (Object.keys(firebaseConfig).length > 0) {
+                const firebaseApp = initializeApp(firebaseConfig);
+                db = getFirestore(firebaseApp);
+                auth = getAuth(firebaseApp);
+                
+                try {
+                    if (authToken) {
+                        await signInWithCustomToken(auth, authToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    
+                    const userId = auth.currentUser.uid;
+                    const userDocRef = doc(db, `artifacts/${appId}/public/data/users`, userId);
+                    const userDoc = await getDoc(userDocRef);
+                    userRole = userDoc.exists() && userDoc.data().role ? userDoc.data().role : 'all';
+                    
+                    checkAccess(userRole);
+                    setupTabSwitching();
+                    setupAppEventHandlers();
+                } catch (error) {
+                    console.error("Ошибка аутентификации:", error);
+                    checkAccess('none');
+                }
+            } else {
+                console.error("Firebase config is missing.");
+                checkAccess('none');
+            }
+        }
+        
+        initializeAppAndListeners();
+    </script>
+</body>
+</html>
