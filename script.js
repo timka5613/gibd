@@ -8,6 +8,7 @@ const app = express();
 const port = 3000;
 
 // ----- Настройки и подключение к базе данных MongoDB -----
+// ВАЖНО: ЗАМЕНИТЕ ЭТУ СТРОКУ НА ВАШУ ИЗ MONGODB ATLAS
 const mongoURI = 'mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/<database-name>?retryWrites=true&w=majority';
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Успешное подключение к MongoDB!'))
@@ -74,6 +75,14 @@ const testSchema = new mongoose.Schema({
     questions: [questionSchema]
 });
 const Test = mongoose.model('Test', testSchema);
+
+const newsSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    authorRole: { type: String, required: true, enum: ['Начальник ОРЛС', 'Зам. начальника ОРЛС'] },
+    dateCreated: { type: Date, default: Date.now }
+});
+const News = mongoose.model('News', newsSchema);
 
 
 // ----- Маршруты API (Endpoints) -----
@@ -182,7 +191,6 @@ app.get('/api/tests', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
-
 app.post('/api/tests', async (req, res) => {
     try {
         const newTest = new Test(req.body);
@@ -192,7 +200,6 @@ app.post('/api/tests', async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
-
 app.put('/api/tests/:id', async (req, res) => {
     try {
         const updatedTest = await Test.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -202,7 +209,6 @@ app.put('/api/tests/:id', async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
-
 app.delete('/api/tests/:id', async (req, res) => {
     try {
         const deletedTest = await Test.findByIdAndDelete(req.params.id);
@@ -212,6 +218,26 @@ app.delete('/api/tests/:id', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
+// Новости
+app.get('/api/news', async (req, res) => {
+    try {
+        const news = await News.find().sort({ dateCreated: -1 }); // Сортировка по убыванию даты
+        res.json(news);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+app.post('/api/news', async (req, res) => {
+    try {
+        const newNews = new News(req.body);
+        await newNews.save();
+        res.status(201).json(newNews);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
 
 // ----- Планировщик задач (Cron Job) для автоматического удаления строев -----
 cron.schedule('0 21 * * *', async () => {
